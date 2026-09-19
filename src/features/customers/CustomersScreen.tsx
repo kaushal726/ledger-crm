@@ -1,44 +1,57 @@
 import { useState } from "react";
 import { FiPlus, FiUsers } from "react-icons/fi";
 import { EMPTY_ACCOUNT, getLedgerIndex } from "../../data/ledger";
-import { matchesNameOrPhone } from "../../data/search";
 import { useDB } from "../../data/store";
 import { href, navigate, setQuery, useRoute } from "../../app/router";
 import { formatMoney, formatPhone, round2 } from "../../lib/format";
+import { Avatar, type AvatarTone } from "../../ui/Avatar";
 import { Button } from "../../ui/Button";
 import { EmptyState } from "../../ui/feedback";
 import { SearchInput } from "../../ui/inputs";
 import { Fab, ListGroup, ListRow, PageHeader, StatGrid } from "../../ui/layout";
-import { Segmented } from "../../ui/Segmented";
+import { ChoiceChips } from "../../ui/Segmented";
+import { SelectChip } from "../../ui/SelectChip";
 import { BalanceText } from "./BalanceText";
 import { CustomerFormSheet } from "./CustomerFormSheet";
+import {
+  CUSTOMER_SORTS, CUSTOMER_STATUSES, NO_CONTRACTOR, filterCustomers, statusCounts, statusOf,
+  type CustomerFilters, type CustomerSort, type CustomerStatus,
+} from "./customerFilters";
 import styles from "./customers.module.css";
 
 const PAGE_SIZE = 100;
-type Filter = "all" | "due";
+const STATUS_LABELS: Record<CustomerStatus, string> = { all: "All", due: "Due", advance: "Advance", settled: "Settled" };
+const AVATAR_TONE: Record<Exclude<CustomerStatus, "all">, AvatarTone> = { due: "due", advance: "paid", settled: "primary" };
+
+function readFilters(query: URLSearchParams): CustomerFilters {
+  const status = query.get("status") as CustomerStatus;
+  const sort = query.get("sort") as CustomerSort;
+  return {
+    query: query.get("q") ?? "",
+    status: CUSTOMER_STATUSES.includes(status) ? status : "all",
+    contractor: query.get("contractor") ?? "",
+    sort: CUSTOMER_SORTS.some((s) => s.value === sort) ? sort : "name",
+  };
+}
 
 export function CustomersScreen() {
   const db = useDB();
   const route = useRoute();
   const [adding, setAdding] = useState(false);
   const [limit, setLimit] = useState(PAGE_SIZE);
-  const query = route.query.get("q") ?? "";
-  const filter: Filter = route.query.get("filter") === "due" ? "due" : "all";
+  const filters = readFilters(route.query);
   const index = getLedgerIndex(db);
   const balanceOf = (id: string) => (index.accounts.get(id) ?? EMPTY_ACCOUNT).balance;
 
-  const balances = db.customers.map((c) => balanceOf(c.id));
-  const totals = {
-    due: round2(balances.filter((b) => b > 0).reduce((s, b) => s + b, 0)),
-    withDue: balances.filter((b) => b > 0).length,
-  };
-
-  const q = query.trim().toLowerCase();
-  const matched = db.customers.filter((c) => (!q || matchesNameOrPhone(c, q)) && (filter === "all" || balanceOf(c.id) > 0));
-  const list = filter === "due"
-    ? matched.sort((a, b) => balanceOf(b.id) - balanceOf(a.id))
-    : matched.sort((a, b) => a.name.localeCompare(b.name));
-
+  const counts = statusCounts(db);
+  const totalDue = round2(db.customers.reduce((s, c) => s + Math.max(0, balanceOf(c.id)), 0));
+  const list = filterCustomers(db, filters);
+  const filtered = Boolean(filters.query || filters.status !== "all" || filters.contractor);
+  const contractorOptions = [
+    { value: "", label: "All" },
+    { value: NO_CONTRACTOR, label: "No contractor" },
+    ...[...db.contractors].sort((a, b) => a.name.localeCompare(b.name)).map((c) => ({ value: c.id, label: c.name })),
+  ];
   const addButton = <Button variant="primary" icon={<FiPlus />} onClick={() => setAdding(true)}>Add customer</Button>;
 
   return (
@@ -46,20 +59,27 @@ export function CustomersScreen() {
       <PageHeader title="Customers" actions={<span className="desktop-only">{addButton}</span>} />
       <div className={styles.summary}>
         <StatGrid columns={2} stats={[
-          { label: "Total due", value: formatMoney(totals.due), tone: totals.due > 0 ? "due" : undefined },
-          { label: "Customers with due", value: `${totals.withDue} of ${db.customers.length}` },
+          { label: "Total due", value: formatMoney(totalDue), tone: totalDue > 0 ? "due" : undefined },
+          { label: "Customers with due", value: `${counts.due} of ${counts.all}`, tone: counts.due > 0 ? "accent" : undefined },
         ]} />
       </div>
+
       <div className={styles.search}>
-        <SearchInput value={query} onChange={(q) => setQuery(route, { q: q || null })} placeholder="Search name or phone" />
+        <SearchInput value={filters.query} onChange={(q) => setQuery(route, { q: q || null })} placeholder="Search name or phone" />
       </div>
-      <Segmented
-        label="Filter customers"
-        className={styles.filters}
-        value={filter}
-        onChange={(f) => setQuery(route, { filter: f === "all" ? null : f })}
-        options={[{ value: "all", label: "All" }, { value: "due", label: "With due", count: totals.withDue }]}
-      />
+      <div className={styles.filters}>
+        <ChoiceChips
+          label="Balance"
+          scrollable
+          value={filters.status}
+          onChange={(s) => setQuery(route, { status: s === "all" ? null : s })}
+          options={CUSTOMER_STATUSES.map((s) => ({ value: s, label: STATUS_LABELS[s], count: counts[s] }))}
+        />
+        <div className={styles.filterRow}>
+          <SelectChip label="Contractor" value={filters.contractor} options={contractorOptions} onChange={(c) => setQuery(route, { contractor: c || null })} />
+          <SelectChip label="Sort" value={filters.sort} options={CUSTOMER_SORTS} onChange={(s) => setQuery(route, { sort: s === "name" ? null : s })} />
+        </div>
+      </div>
 
       {list.length ? (
         <>
@@ -69,6 +89,7 @@ export function CustomersScreen() {
               return (
                 <ListRow
                   key={c.id}
+                  avatar={<Avatar name={c.name} tone={AVATAR_TONE[statusOf(balanceOf(c.id))]} />}
                   title={c.name}
                   subtitle={[c.phone && formatPhone(c.phone), contractor?.name].filter(Boolean).join(" · ") || undefined}
                   right={<BalanceText balance={balanceOf(c.id)} />}
@@ -79,8 +100,13 @@ export function CustomersScreen() {
           </ListGroup>
           {list.length > limit && <Button block className={styles.more} onClick={() => setLimit((l) => l + PAGE_SIZE)}>Show more</Button>}
         </>
-      ) : db.customers.length ? (
-        <EmptyState icon={<FiUsers />} title="No matching customers" message="Try a different name or phone number." />
+      ) : filtered ? (
+        <EmptyState
+          icon={<FiUsers />}
+          title="No matching customers"
+          message="Try a different search or filter."
+          action={<Button onClick={() => setQuery(route, { q: null, status: null, contractor: null })}>Clear filters</Button>}
+        />
       ) : (
         <EmptyState icon={<FiUsers />} title="No customers yet" message="Add a customer, or create one while taking an order." action={addButton} />
       )}

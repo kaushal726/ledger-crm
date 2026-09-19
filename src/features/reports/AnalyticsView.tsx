@@ -40,6 +40,7 @@ export function AnalyticsView() {
         <StatGrid columns={2} stats={[
           {
             label: "Sales",
+            tone: "primary",
             value: formatMoney(current.total),
             sub: (
               <span className={`${styles.delta} ${diff >= 0 ? styles.up : styles.down}`}>

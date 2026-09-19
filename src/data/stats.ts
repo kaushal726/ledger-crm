@@ -95,11 +95,11 @@ export function contractorSummary(db: DB, contractorId: string, range: DateRange
   };
 }
 
-/** All-time completed sales per contractor. */
-export function contractorTotals(db: DB): Map<string, { total: number; orders: number }> {
+/** Completed sales per contractor, all-time unless a range is given. */
+export function contractorTotals(db: DB, range: DateRange = { from: "", to: "" }): Map<string, { total: number; orders: number }> {
   const totals = new Map<string, { total: number; orders: number }>();
   db.orders.forEach((o) => {
-    if (o.status !== "completed" || !o.contractorId) return;
+    if (o.status !== "completed" || !o.contractorId || !isWithin(o.date, range.from, range.to)) return;
     const t = totals.get(o.contractorId) ?? { total: 0, orders: 0 };
     t.total = round2(t.total + orderTotal(o));
     t.orders += 1;

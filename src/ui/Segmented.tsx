@@ -29,18 +29,21 @@ export function Segmented<T extends string>({ options, value, onChange, label, c
 }
 
 interface ChoiceChipsProps<T extends string> {
-  options: { value: T; label: string }[];
+  options: { value: T; label: string; count?: number }[];
   value: T;
   onChange: (value: T) => void;
   label: string;
+  /** One line that scrolls sideways instead of wrapping (for filter rows on phones). */
+  scrollable?: boolean;
 }
 
-export function ChoiceChips<T extends string>({ options, value, onChange, label }: ChoiceChipsProps<T>) {
+export function ChoiceChips<T extends string>({ options, value, onChange, label, scrollable }: ChoiceChipsProps<T>) {
   return (
-    <div className={styles.chips} role="group" aria-label={label}>
+    <div className={cx(styles.chips, scrollable && styles.chipsScroll)} role="group" aria-label={label}>
       {options.map((o) => (
         <button key={o.value} type="button" className={styles.chip} aria-pressed={o.value === value} onClick={() => onChange(o.value)}>
           {o.label}
+          {o.count !== undefined && <span className={styles.count}>{o.count}</span>}
         </button>
       ))}
     </div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FiArchive, FiCloud, FiHome, FiLock, FiPackage, FiSmartphone } from "react-icons/fi";
+import { FiArchive, FiCloud, FiHardDrive, FiHome, FiLock, FiPackage, FiSmartphone } from "react-icons/fi";
 import { APP_NAME } from "../../app/brand";
 import { businessOf } from "../../data/business";
 import { useDB } from "../../data/store";
@@ -8,7 +8,9 @@ import { href } from "../../app/router";
 import { isStandalone, useInstallPrompt } from "../../app/installPrompt";
 import { describeSyncStatus, useSyncStatus } from "../../sync/useSyncStatus";
 import { ListGroup, ListRow, PageHeader, SectionTitle } from "../../ui/layout";
+import { plural } from "../../lib/format";
 import { Sheet } from "../../ui/Sheet";
+import { formatBytes, useStorageUsage } from "./useStorageUsage";
 import styles from "./more.module.css";
 
 export function MoreScreen() {
@@ -17,6 +19,8 @@ export function MoreScreen() {
   const install = useInstallPrompt();
   const lockIcon = useUnlocked() ? undefined : <FiLock aria-label="Locked" className={styles.lock} />;
   const [showInstallHelp, setShowInstallHelp] = useState(false);
+  const bytes = useStorageUsage(db);
+  const counts = [plural(db.orders.length, "order"), plural(db.payments.length, "payment"), plural(db.customers.length, "customer")].join(" · ");
 
   return (
     <>
@@ -28,14 +32,13 @@ export function MoreScreen() {
         <ListRow leading={<FiArchive />} title="Backup & restore" subtitle="Export or restore all data" right={lockIcon} href={href("more/backup")} />
       </ListGroup>
 
-      {!isStandalone() && (
-        <>
-          <SectionTitle>App</SectionTitle>
-          <ListGroup>
-            <ListRow leading={<FiSmartphone />} title="Install on this phone" subtitle="Opens like an app, works offline" onClick={install ?? (() => setShowInstallHelp(true))} chevron />
-          </ListGroup>
-        </>
-      )}
+      <SectionTitle>This phone</SectionTitle>
+      <ListGroup>
+        <ListRow leading={<FiHardDrive />} title={bytes === null ? "Stored on this phone" : `${formatBytes(bytes)} stored on this phone`} subtitle={counts} />
+        {!isStandalone() && (
+          <ListRow leading={<FiSmartphone />} title="Install on this phone" subtitle="Opens like an app, works offline" onClick={install ?? (() => setShowInstallHelp(true))} chevron />
+        )}
+      </ListGroup>
 
       <p className={styles.version}>{APP_NAME} · version {__APP_VERSION__}</p>
 

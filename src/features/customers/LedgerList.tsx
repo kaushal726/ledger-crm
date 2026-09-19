@@ -33,7 +33,7 @@ export function LedgerList({ entries, onOpenOrder, onOpenPayment }: LedgerListPr
         const isCredit = entry.amount < 0;
         const content = (
           <>
-            <span className={cx(styles.badge, isCredit && styles.badgeIn)} aria-hidden>
+            <span className={cx(styles.badge, isCredit ? styles.badgeIn : entry.kind === "order" && styles.badgeOut)} aria-hidden>
               {entry.kind === "opening" ? <FiBookOpen /> : isCredit ? <FiArrowDownLeft /> : <FiArrowUpRight />}
             </span>
             <span className={styles.entryBody}>

@@ -80,7 +80,7 @@ function OrderDetail({ order, onClose }: { order: Order; onClose: () => void }) 
         <>
           <SectionTitle>Payment</SectionTitle>
           <StatGrid stats={[
-            { label: "Total", value: formatMoney(money.total) },
+            { label: "Total", value: formatMoney(money.total), tone: "primary" },
             order.status === "pending" ? { label: "Advance", value: formatMoney(money.advance), tone: money.advance > 0 ? "paid" : undefined } : { label: "Paid", value: formatMoney(money.paid), tone: money.paid > 0 ? "paid" : undefined },
             { label: "Due", value: formatMoney(money.due), tone: money.due > 0 ? "due" : undefined },
           ]} />

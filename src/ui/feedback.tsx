@@ -5,7 +5,7 @@ import styles from "./feedback.module.css";
 export type ChipTone = "neutral" | "due" | "paid" | "warn";
 
 export function Chip({ tone = "neutral", children }: { tone?: ChipTone; children: ReactNode }) {
-  return <span className={cx(styles.chip, styles[tone])}>{children}</span>;
+  return <span className={cx(styles.chip, styles[tone])} data-chip={tone}>{children}</span>;
 }
 
 interface EmptyStateProps {

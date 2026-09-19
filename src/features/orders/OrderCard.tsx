@@ -17,11 +17,20 @@ interface OrderCardProps {
   onReceive: () => void;
 }
 
+type CardTone = "pending" | "due" | "paid" | "cancelled";
+
+function cardTone(order: Order, money: OrderMoney): CardTone {
+  if (order.status === "cancelled") return "cancelled";
+  if (order.status === "pending") return "pending";
+  return money.due > 0 ? "due" : "paid";
+}
+
 export function OrderCard({ order, money, customerName, contractorName, onOpen, onComplete, onReceive }: OrderCardProps) {
   const meta = [contractorName, order.site].filter(Boolean).join(" · ");
   return (
     <article
       className={cx(styles.card, order.status === "cancelled" && styles.cancelled)}
+      data-tone={cardTone(order, money)}
       role="button"
       tabIndex={0}
       onClick={onOpen}

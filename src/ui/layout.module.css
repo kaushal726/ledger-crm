@@ -64,22 +64,19 @@
   padding: 16px;
 }
 
-/* Stat grid */
+/* Stat tiles — softly tinted by meaning (sales, collected, due) */
 .stats {
   display: grid;
   grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  overflow: hidden;
+  gap: 8px;
 }
 
 .stat {
-  padding: 12px 14px;
+  padding: 11px 12px;
   min-width: 0;
-  border-left: 1px solid var(--line-soft);
-  border-top: 1px solid var(--line-soft);
-  margin: -1px 0 0 -1px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
 }
 
 .statLabel {
@@ -108,8 +105,18 @@
   font-weight: 600;
 }
 
-.toneDue { color: var(--due); }
-.tonePaid { color: var(--paid); }
+.tonePrimary { background: var(--primary-tint); border-color: var(--primary-line); }
+.tonePrimary .statValue { color: var(--primary); }
+.tonePaid { background: var(--paid-bg); border-color: var(--paid-line); }
+.tonePaid .statValue { color: var(--paid); }
+.toneDue { background: var(--due-bg); border-color: var(--due-line); }
+.toneDue .statValue { color: var(--due); }
+.toneAccent { background: var(--accent-bg); border-color: var(--accent-line); }
+.toneAccent .statValue { color: var(--accent-ink); }
+.tonePrimary .statLabel,
+.tonePaid .statLabel,
+.toneDue .statLabel,
+.toneAccent .statLabel { color: var(--ink-2); }
 
 /* Section heading */
 .section {

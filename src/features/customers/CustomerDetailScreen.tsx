@@ -59,7 +59,7 @@ export function CustomerDetailScreen({ customerId }: { customerId: string }) {
         <Button size="sm" icon={<FiEdit2 />} onClick={() => setEditing(true)}>Edit</Button>
       </div>
 
-      <Panel className={styles.balance}>
+      <Panel className={cx(styles.balance, account.balance > 0 ? styles.balanceDue : account.balance < 0 ? styles.balanceAdvance : styles.balanceSettled)}>
         <div className={styles.balanceLabel}>{balanceLabel}</div>
         <div className={cx(styles.balanceValue, "num", account.balance > 0 && styles.due, account.balance < 0 && styles.advance)}>
           {formatMoney(Math.abs(account.balance))}

@@ -58,7 +58,7 @@ export function ContractorDetailScreen({ contractorId }: { contractorId: string 
       <Segmented label="Period" className={styles.block} value={period} onChange={(p) => setQuery(route, { period: p === "all" ? null : p })} options={PERIODS.map((p) => ({ value: p, label: PERIOD_LABELS[p] }))} />
       <div className={styles.block}>
         <StatGrid columns={2} stats={[
-          { label: "Total sales", value: formatMoney(summary.total) },
+          { label: "Total sales", value: formatMoney(summary.total), tone: "primary" },
           { label: "Orders", value: summary.orders.length },
           { label: "Sites", value: summary.sites.length },
           { label: "Customers", value: summary.customerIds.length },

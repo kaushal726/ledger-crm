@@ -10,11 +10,18 @@
   --primary: #233544;
   --primary-hover: #1a2835;
   --primary-soft: #eef2f5;
+  --primary-tint: #e6edf3;
+  --primary-line: #cfd9e3;
   --accent: #d98e2b;
+  --accent-bg: #fdf5ea;
+  --accent-ink: #94560c;
+  --accent-line: #f3dcb9;
   --due: #b42318;
   --due-bg: #fef3f2;
+  --due-line: #fdd5d0;
   --paid: #067647;
   --paid-bg: #ecfdf3;
+  --paid-line: #bfeccf;
   --neutral-bg: #f2f4f7;
   --neutral: #475467;
   --warn: #b54708;

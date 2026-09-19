@@ -2,6 +2,13 @@
   margin-bottom: 12px;
 }
 
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
 .contact {
   display: flex;
   gap: 8px;

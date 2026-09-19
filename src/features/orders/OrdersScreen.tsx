@@ -60,8 +60,8 @@ export function OrdersScreen() {
       <DateSwitcher date={date} onChange={(d) => setQuery(route, { date: d === todayISO() ? null : d })} />
       <div className={styles.summary}>
         <StatGrid stats={[
-          { label: "Sales", value: formatMoney(day.sales) },
-          { label: "Collected", value: formatMoney(day.collected) },
+          { label: "Sales", value: formatMoney(day.sales), tone: "primary" },
+          { label: "Collected", value: formatMoney(day.collected), tone: day.collected > 0 ? "paid" : undefined },
           { label: "Due", value: formatMoney(day.due), tone: day.due > 0 ? "due" : undefined },
         ]} />
       </div>

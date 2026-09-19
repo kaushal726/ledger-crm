@@ -34,20 +34,29 @@ export function Panel({ children, padded, className }: { children: ReactNode; pa
   return <div className={cx(styles.panel, padded && styles.padded, className)}>{children}</div>;
 }
 
+export type StatTone = "primary" | "paid" | "due" | "accent";
+
 export interface Stat {
   label: string;
   value: ReactNode;
-  tone?: "due" | "paid";
+  tone?: StatTone;
   sub?: ReactNode;
 }
+
+const TONE_CLASS: Record<StatTone, string> = {
+  primary: styles.tonePrimary,
+  paid: styles.tonePaid,
+  due: styles.toneDue,
+  accent: styles.toneAccent,
+};
 
 export function StatGrid({ stats, columns = 3 }: { stats: Stat[]; columns?: number }) {
   return (
     <div className={styles.stats} style={{ "--cols": columns } as CSSProperties}>
       {stats.map((s) => (
-        <div key={s.label} className={styles.stat}>
+        <div key={s.label} className={cx(styles.stat, s.tone && TONE_CLASS[s.tone])}>
           <div className={styles.statLabel}>{s.label}</div>
-          <div className={cx(styles.statValue, s.tone === "due" && styles.toneDue, s.tone === "paid" && styles.tonePaid)}>{s.value}</div>
+          <div className={styles.statValue}>{s.value}</div>
           {s.sub && <div className={styles.statSub}>{s.sub}</div>}
         </div>
       ))}
@@ -73,14 +82,17 @@ interface ListRowProps {
   subtitle?: ReactNode;
   right?: ReactNode;
   leading?: ReactNode;
+  /** Shown as-is (e.g. an Avatar), without the icon box used for `leading`. */
+  avatar?: ReactNode;
   href?: string;
   onClick?: () => void;
   chevron?: boolean;
 }
 
-export function ListRow({ title, subtitle, right, leading, href, onClick, chevron }: ListRowProps) {
+export function ListRow({ title, subtitle, right, leading, avatar, href, onClick, chevron }: ListRowProps) {
   const content = (
     <>
+      {avatar}
       {leading && <span className={styles.rowLeading} aria-hidden>{leading}</span>}
       <span className={styles.rowMain}>
         <span className={styles.rowTitle}>{title}</span>

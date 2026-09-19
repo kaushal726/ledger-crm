@@ -43,6 +43,16 @@
   color: var(--primary);
 }
 
+.tab .navIcon {
+  padding: 3px 16px;
+  border-radius: 999px;
+  transition: background 0.15s ease;
+}
+
+.tab[aria-current="page"] .navIcon {
+  background: var(--primary-tint);
+}
+
 .navIcon {
   position: relative;
   display: inline-flex;
@@ -159,7 +169,7 @@
 
 .syncBadge[data-state="synced"] {
   background: var(--paid-bg);
-  border-color: #abefc6;
+  border-color: var(--paid-line);
   color: var(--paid);
 }
 

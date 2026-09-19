@@ -1,7 +1,7 @@
 /* Segmented control */
 .segmented {
   display: flex;
-  background: var(--surface-sunken);
+  background: #e7ebf0;
   border-radius: 12px;
   padding: 3px;
   gap: 2px;
@@ -21,14 +21,26 @@
 
 .segment[aria-pressed="true"] {
   background: var(--surface);
-  color: var(--ink);
+  color: var(--primary);
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.08);
 }
 
 .count {
-  margin-left: 5px;
-  color: var(--ink-3);
-  font-weight: 600;
+  display: inline-block;
+  min-width: 20px;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(35, 53, 68, 0.08);
+  color: var(--ink-2);
+  font-size: 11.5px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+[aria-pressed="true"] > .count {
+  background: var(--primary-tint);
+  color: var(--primary);
 }
 
 /* Choice chips */
@@ -36,6 +48,22 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.chipsScroll {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  margin: 0 -16px;
+  padding: 0 16px 2px;
+  scrollbar-width: none;
+}
+
+.chipsScroll::-webkit-scrollbar {
+  display: none;
+}
+
+.chipsScroll > .chip {
+  flex: none;
 }
 
 .chip {
@@ -52,6 +80,11 @@
 .chip[aria-pressed="true"] {
   background: var(--primary);
   border-color: var(--primary);
+  color: #fff;
+}
+
+.chip[aria-pressed="true"] > .count {
+  background: rgba(255, 255, 255, 0.18);
   color: #fff;
 }
 
