@@ -1,0 +1,18 @@
+.search {
+  margin-bottom: 12px;
+}
+
+.contact {
+  display: flex;
+  gap: 8px;
+  margin: -6px 0 14px;
+}
+
+.contact > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.block {
+  margin-bottom: 12px;
+}

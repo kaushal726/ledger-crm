@@ -1,0 +1,94 @@
+.tabs {
+  margin-bottom: 16px;
+}
+
+.block {
+  margin-bottom: 14px;
+}
+
+.monthSwitch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px;
+  margin-bottom: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-weight: 650;
+}
+
+.delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.up { color: var(--paid); }
+.down { color: var(--due); }
+
+/* Export */
+.optionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  padding: 6px 14px;
+  font-size: 15px;
+  font-weight: 550;
+}
+
+.optionRow + .optionRow {
+  border-top: 1px solid var(--line-soft);
+}
+
+.customRange {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.exportBar {
+  position: sticky;
+  bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 10px);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 10px 10px 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 14px rgba(16, 24, 40, 0.08);
+}
+
+.exportInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.exportInfo b {
+  display: block;
+  font-size: 14.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.exportInfo small {
+  display: block;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 900px) {
+  .exportBar {
+    bottom: 16px;
+  }
+}

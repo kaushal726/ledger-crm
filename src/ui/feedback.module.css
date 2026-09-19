@@ -1,0 +1,75 @@
+/* Status chip */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.neutral { background: var(--neutral-bg); color: var(--neutral); }
+.due { background: var(--due-bg); color: var(--due); }
+.paid { background: var(--paid-bg); color: var(--paid); }
+.warn { background: var(--warn-bg); color: var(--warn); }
+
+/* Empty state */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 36px 20px;
+  background: var(--surface);
+  border: 1px dashed #d8dce2;
+  border-radius: var(--radius);
+}
+
+.emptyIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 4px;
+  border-radius: 12px;
+  background: var(--neutral-bg);
+  color: var(--ink-2);
+  font-size: 20px;
+}
+
+.emptyTitle {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 650;
+}
+
+.emptyText {
+  margin: 0;
+  max-width: 300px;
+  font-size: 13.5px;
+  color: var(--ink-3);
+}
+
+.emptyAction {
+  margin-top: 10px;
+}
+
+/* Skeleton */
+.skeleton {
+  border-radius: var(--radius);
+  background: #eaecf0;
+  animation: pulse 1.3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% { opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}

@@ -1,0 +1,76 @@
+.gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 340px;
+  margin: 24px auto 0;
+  padding: 28px 20px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 4px;
+  border-radius: 14px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 22px;
+}
+
+.title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.hint {
+  font-size: 13.5px;
+  color: var(--ink-3);
+}
+
+.pin {
+  width: 180px;
+  min-height: 52px;
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  text-align: center;
+  font-size: 26px;
+  letter-spacing: 0.5em;
+  padding-left: 0.5em; /* balances the trailing letter-spacing */
+  outline: none;
+}
+
+.pin:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.pin[aria-invalid="true"] {
+  border-color: var(--due);
+}
+
+.error {
+  min-height: 18px;
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: var(--due);
+}
+
+/* Small lock badge on locked nav items */
+.navLock {
+  position: absolute;
+  top: -3px;
+  right: -9px;
+  font-size: 11px !important;
+  color: var(--ink-3);
+}

@@ -1,0 +1,44 @@
+.search {
+  position: sticky;
+  top: -8px;
+  z-index: 1;
+  margin: -8px -16px 12px;
+  padding: 8px 16px;
+  background: var(--bg);
+}
+
+.create {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  margin-bottom: 12px;
+  padding: 0 14px;
+  border: 1px dashed #cdd2d9;
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--primary);
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.createQuery {
+  color: var(--ink-2);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.group {
+  margin-bottom: 12px;
+}
+
+.empty {
+  margin: 24px 0;
+  text-align: center;
+  color: var(--ink-3);
+  font-size: 14px;
+}

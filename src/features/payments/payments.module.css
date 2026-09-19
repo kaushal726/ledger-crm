@@ -1,0 +1,10 @@
+.against {
+  margin: 0 2px 14px;
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+
+.methods {
+  margin-bottom: 14px;
+}

@@ -1,0 +1,235 @@
+/* Page header */
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 8px 0 16px;
+}
+
+.headerText {
+  min-width: 0;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.title {
+  margin: 2px 0 0;
+  font-size: 26px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 40px;
+  margin: 0 0 2px -6px;
+  padding: 0 6px;
+  border: none;
+  background: none;
+  color: var(--primary);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Panel */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.padded {
+  padding: 16px;
+}
+
+/* Stat grid */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.stat {
+  padding: 12px 14px;
+  min-width: 0;
+  border-left: 1px solid var(--line-soft);
+  border-top: 1px solid var(--line-soft);
+  margin: -1px 0 0 -1px;
+}
+
+.statLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statValue {
+  margin-top: 3px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+
+.statSub {
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.toneDue { color: var(--due); }
+.tonePaid { color: var(--paid); }
+
+/* Section heading */
+.section {
+  margin: 22px 0 8px 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--ink-3);
+}
+
+/* List group */
+.list {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 56px;
+  padding: 11px 14px;
+  border: none;
+  background: none;
+  text-align: left;
+  text-decoration: none;
+  color: inherit;
+}
+
+.row + .row {
+  border-top: 1px solid var(--line-soft);
+}
+
+button.row:hover,
+a.row:hover {
+  background: #fafbfc;
+}
+
+.rowLeading {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--neutral-bg);
+  color: var(--ink-2);
+  font-size: 16px;
+}
+
+.rowMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.rowTitle {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rowSubtitle {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rowRight {
+  flex: none;
+  text-align: right;
+  font-size: 14.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.chevron {
+  flex: none;
+  color: var(--ink-3);
+  font-size: 18px;
+  margin-right: -4px;
+}
+
+/* Floating action button (phones) */
+.fab {
+  position: fixed;
+  right: 16px;
+  bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 16px);
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 20px 0 16px;
+  border: none;
+  border-radius: 16px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 650;
+  box-shadow: var(--shadow-float);
+}
+
+.fab svg {
+  font-size: 20px;
+}
+
+.fabSpacer {
+  height: 84px;
+}

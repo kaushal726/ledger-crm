@@ -1,0 +1,187 @@
+.main {
+  min-height: 100dvh;
+  padding: calc(8px + var(--safe-top)) 16px calc(var(--tabbar-height) + var(--safe-bottom) + 24px);
+}
+
+.content {
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+/* Bottom tab bar (phones) */
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  height: calc(var(--tabbar-height) + var(--safe-bottom));
+  padding: 6px 4px var(--safe-bottom);
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-3);
+  text-decoration: none;
+}
+
+.tab svg {
+  font-size: 21px;
+}
+
+.tab[aria-current="page"] {
+  color: var(--primary);
+}
+
+.navIcon {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Side navigation (desktop) */
+.sidenav {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--sidenav-width);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 20px 12px;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px 18px;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.brand img {
+  border-radius: 8px;
+}
+
+.sideItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--touch);
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink-2);
+  text-decoration: none;
+}
+
+.sideItem svg {
+  font-size: 18px;
+}
+
+.sideItem:hover {
+  background: var(--bg);
+}
+
+.sideItem[aria-current="page"] {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.sideFoot {
+  margin-top: auto;
+  padding: 0 4px;
+}
+
+@media (min-width: 900px) {
+  .main {
+    margin-left: var(--sidenav-width);
+    padding: 32px 32px 48px;
+  }
+}
+
+/* Sync badge */
+.syncBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+  min-height: 32px;
+  padding: 0 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.syncBadge::before {
+  content: "";
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink-3);
+}
+
+.syncBadge[data-state="synced"]::before { background: var(--paid); }
+.syncBadge[data-state="syncing"]::before { background: var(--accent); }
+.syncBadge[data-state="offline"]::before { background: var(--warn); }
+.syncBadge[data-state="error"]::before { background: var(--due); }
+
+/* Update available bar */
+.update {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  top: calc(12px + var(--safe-top));
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 10px 10px 10px 16px;
+  border-radius: 14px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--shadow-float);
+}
+
+.updateButton {
+  min-height: 36px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* Boot skeleton */
+.boot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 24px;
+}

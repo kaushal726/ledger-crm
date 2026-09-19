@@ -1,0 +1,84 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-2);
+  padding-left: 2px;
+}
+
+.optional {
+  font-weight: 500;
+  color: var(--ink-3);
+}
+
+.input {
+  width: 100%;
+  min-height: var(--touch);
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  font-size: 16px; /* 16px stops iOS zooming into the field */
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.input::placeholder {
+  color: var(--ink-3);
+}
+
+.input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.invalid,
+.invalid:focus {
+  border-color: var(--due);
+  box-shadow: 0 0 0 3px var(--due-bg);
+}
+
+textarea.input {
+  min-height: 76px;
+  resize: vertical;
+}
+
+.hint,
+.error {
+  margin: 0;
+  font-size: 12.5px;
+  padding-left: 2px;
+}
+
+.hint {
+  color: var(--ink-3);
+}
+
+.error {
+  color: var(--due);
+}
+
+.prefixWrap {
+  position: relative;
+}
+
+.prefix {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-3);
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.prefixWrap .input {
+  padding-left: 28px;
+}
