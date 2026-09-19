@@ -1,5 +1,6 @@
-/* Handles a setup link (#/connect?url=…) shared from another device. */
-import { useEffect, useRef } from "react";
+/* Handles a setup link (/connect#url=…) shared from another device. The Sheet URL rides in the
+ * #fragment so it is never sent to the web server hosting the app. */
+import { useEffect, useRef, useState } from "react";
 import { FiLink } from "react-icons/fi";
 import { connect } from "../sync/engine";
 import { getApiUrl, isValidApiUrl } from "../sync/config";
@@ -8,7 +9,12 @@ import { EmptyState } from "../ui/feedback";
 import { useToast } from "../ui/Toast";
 import { href, navigate } from "./router";
 
-export function ConnectScreen({ apiUrl }: { apiUrl: string }) {
+function setupLinkApiUrl(query: URLSearchParams): string {
+  return new URLSearchParams(location.hash.slice(1)).get("url") ?? query.get("url") ?? "";
+}
+
+export function ConnectScreen({ query }: { query: URLSearchParams }) {
+  const [apiUrl] = useState(() => setupLinkApiUrl(query));
   const confirm = useConfirm();
   const toast = useToast();
   const handled = useRef(false);

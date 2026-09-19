@@ -1,6 +1,7 @@
 import { FiLock } from "react-icons/fi";
 import { useDB } from "../data/store";
 import { cx } from "../lib/cx";
+import { APP_NAME } from "./brand";
 import { businessOf } from "../data/business";
 import { NAV_ITEMS, type TabId } from "./navItems";
 import { useUnlocked } from "./pinLock";
@@ -38,7 +39,10 @@ export function SideNav({ active }: { active: TabId }) {
     <nav className={cx(styles.sidenav, "desktop-only")} aria-label="Main">
       <div className={styles.brand}>
         <img src={`${import.meta.env.BASE_URL}icons/icon-192.png`} alt="" width={32} height={32} />
-        <span>{business.name}</span>
+        <span className={styles.brandText}>
+          {APP_NAME}
+          {business.name && <small>{business.name}</small>}
+        </span>
       </div>
       {NAV_ITEMS.map(({ id, label, icon, pinLocked }) => (
         <a key={id} href={href(id)} className={styles.sideItem} aria-current={id === active ? "page" : undefined}>

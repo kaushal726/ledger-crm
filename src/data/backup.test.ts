@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { InvalidBackupError, createBackup, parseBackup } from "./backup";
-import { seededDB } from "./seed";
+import { emptyDB } from "./seed";
 
 const v1Backup = {
   customers: [{ id: "c1", name: "Ramesh", phone: "09876543210", address: "Sector 12", createdAt: 1 }],
@@ -32,7 +32,7 @@ describe("restore from the original app's backup (v1)", () => {
 
 describe("backup files", () => {
   it("restores its own export unchanged", () => {
-    const db = seededDB();
+    const db = { ...emptyDB(), items: [{ id: "i1", category: "General", name: "Widget", unit: "pc", price: 50, updatedAt: 1 }] };
     expect(parseBackup(JSON.stringify(createBackup(db)))).toEqual(db);
   });
 

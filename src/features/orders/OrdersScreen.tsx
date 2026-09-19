@@ -1,5 +1,5 @@
 import { FiClipboard, FiPlus } from "react-icons/fi";
-import { businessOf } from "../../data/business";
+import { displayName } from "../../data/business";
 import { EMPTY_ORDER_MONEY, getLedgerIndex } from "../../data/ledger";
 import { daySummary } from "../../data/stats";
 import { useDB } from "../../data/store";
@@ -48,7 +48,7 @@ export function OrdersScreen() {
   return (
     <>
       <PageHeader
-        eyebrow={businessOf(db).name}
+        eyebrow={displayName(db)}
         title="Orders"
         actions={
           <>

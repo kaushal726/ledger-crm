@@ -14,13 +14,13 @@ import vm from "node:vm";
 import type { Plugin } from "vite";
 import { FakeSpreadsheet } from "./fakeSpreadsheet.ts";
 
-interface AppsScript {
+export interface AppsScript {
   doGet(e: { parameter: Record<string, string> }): { text: string };
   doPost(e: { postData: { contents: string } }): { text: string };
   onEdit(e: { range: unknown }): void;
 }
 
-function loadAppsScript(codePath: string, spreadsheet: FakeSpreadsheet): AppsScript {
+export function loadAppsScript(codePath: string, spreadsheet: FakeSpreadsheet): AppsScript {
   const context = vm.createContext({
     console,
     SpreadsheetApp: { getActiveSpreadsheet: () => spreadsheet },
@@ -73,13 +73,25 @@ function createServer(codePath: string): http.Server {
   });
 }
 
+const LISTEN_RETRIES = 40;
+const LISTEN_RETRY_MS = 250;
+
 export function mockSheetApi(options: { port: number; codePath: string }): Plugin {
   let server: http.Server | null = null;
   const start = () => {
     if (server) return;
-    server = createServer(options.codePath);
-    server.on("error", (err) => console.error("Mock Sheet API failed to start", err));
-    server.listen(options.port, () => console.log(`  Mock Sheet API: http://localhost:${options.port}/exec`));
+    const instance = createServer(options.codePath);
+    server = instance;
+    let attempts = 0;
+    // When Vite restarts (e.g. after a config change) the old instance may still hold the port for a moment.
+    instance.on("error", (err: NodeJS.ErrnoException) => {
+      if (err.code === "EADDRINUSE" && attempts++ < LISTEN_RETRIES && server === instance) {
+        setTimeout(() => instance.listen(options.port), LISTEN_RETRY_MS);
+        return;
+      }
+      console.error("Mock Sheet API failed to start", err);
+    });
+    instance.listen(options.port, () => console.log(`  Mock Sheet API: http://localhost:${options.port}/exec`));
   };
   const stop = () => {
     server?.close();

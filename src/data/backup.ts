@@ -3,7 +3,6 @@
  * entries, and each customer's most recent contractor becomes their default.
  */
 import { round2 } from "../lib/format";
-import { DEFAULT_BUSINESS } from "./seed";
 import { COLLECTIONS, type Contractor, type Customer, type DB, type Item, type LineItem, type Order, type OrderStatus, type Payment } from "./types";
 
 const APP_ID = "ledger-crm";
@@ -62,14 +61,12 @@ function fromV1(raw: Loose): DB {
   const contractors: Contractor[] = list(raw.contractors).map((c) => ({ id: str(c.id), name: str(c.name), phone: str(c.phone), createdAt: num(c.createdAt), updatedAt: 0 }));
   const items: Item[] = list(raw.items).map((i) => ({ id: str(i.id), category: str(i.category), name: str(i.name), unit: str(i.unit), price: num(i.price), updatedAt: 0 }));
 
-  return { customers, contractors, items, orders, payments, settings: [DEFAULT_BUSINESS] };
+  return { customers, contractors, items, orders, payments, settings: [] };
 }
 
 function fromV2(raw: Loose): DB {
   const data = raw.data as Loose;
-  const db = Object.fromEntries(COLLECTIONS.map((c) => [c, list(data[c])])) as unknown as DB;
-  if (!db.settings.length) db.settings = [DEFAULT_BUSINESS];
-  return db;
+  return Object.fromEntries(COLLECTIONS.map((c) => [c, list(data[c])])) as unknown as DB;
 }
 
 export function parseBackup(text: string): DB {

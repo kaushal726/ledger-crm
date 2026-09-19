@@ -30,7 +30,7 @@ function Screen({ route }: { route: Route }) {
     case "more":
       return <MoreRoutes page={id} />;
     case "connect":
-      return <ConnectScreen apiUrl={route.query.get("url") ?? ""} />;
+      return <ConnectScreen query={route.query} />;
     default:
       return <OrdersScreen />;
   }

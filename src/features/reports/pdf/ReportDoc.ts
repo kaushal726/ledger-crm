@@ -3,6 +3,7 @@
  */
 import { jsPDF } from "jspdf";
 import { autoTable, type CellInput, type RowInput, type Styles } from "jspdf-autotable";
+import { APP_NAME } from "../../../app/brand";
 import type { BusinessSettings } from "../../../data/types";
 import boldFontUrl from "./fonts/Inter-Bold.ttf?url";
 import regularFontUrl from "./fonts/Inter-Regular.ttf?url";
@@ -73,7 +74,7 @@ export class ReportDoc {
 
   header(business: BusinessSettings, title: string, details: string[]): this {
     const right = this.pageWidth - MARGIN;
-    this.text(business.name, MARGIN, this.y, 15, { bold: true });
+    this.text(business.name || APP_NAME, MARGIN, this.y, 15, { bold: true });
     [business.address, business.phone].filter(Boolean).forEach((line, i) => this.text(line, MARGIN, this.y + 22 + i * 12, 8.5, { color: COLORS.muted }));
     this.text(title, right, this.y, 15, { bold: true, align: "right", color: COLORS.primary });
     details.forEach((line, i) => this.text(line, right, this.y + 22 + i * 12, 8.5, { color: COLORS.muted, align: "right" }));

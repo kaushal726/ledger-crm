@@ -1,4 +1,4 @@
-# Ledger — sales & customer book
+# Ledgerly — sales, dues & customer ledger
 
 Mobile-first app for the shop: daily orders, customer ledgers with dues and payments,
 contractor sales, and PDF reports. It installs on phones (PWA), works offline, and syncs
@@ -7,17 +7,20 @@ through a shared Google Sheet so 3–4 people see the same data.
 React 19 + TypeScript + Vite. No backend server: the Google Sheet (through a small Apps Script)
 is the database, and GitHub Pages hosts the app for free.
 
+The product name lives in `src/app/brand.ts` (page title, install name and PDFs all read it).
+Each shop sets its own name in **More → Business profile**; the app starts with no sample data.
+
 ## Project layout
 
 ```
 src/
-  app/          shell: routing, tab bar, sheet/back-button handling, PWA update prompt
+  app/          shell: routing, tab bar, sheet/back-button handling, PIN lock, PWA update prompt
   data/         types, IndexedDB storage, store, actions, ledger maths, stats, backup
   sync/         offline outbox + sync engine, record <-> Sheet row mapping
   features/     orders, customers, contractors, payments, items, reports (PDF), more
   ui/           shared components (Button, Sheet, fields, lists, toast, confirm…)
 apps-script/Code.gs      Google Sheet backend (Apps Script web app)
-vite-plugins/            service worker generator, local mock of the Sheet backend
+vite-plugins/            service worker, manifest + 404.html, local mock of the Sheet backend
 .github/workflows/       build + deploy to GitHub Pages
 ```
 
@@ -71,6 +74,10 @@ This keeps the same URL. A *new deployment* would get a new URL, and every phone
    The app is served at `https://<username>.github.io/<repo>/`.
 
 Installed apps pick up a new version automatically: they show "A new version is ready · Reload".
+
+URLs are normal paths (`/ledger-crm/customers/…`), so any page can be reloaded or shared. GitHub Pages
+serves `404.html` (a copy of the app) for paths it doesn't know, and installed apps are served
+by the service worker, offline too.
 
 ## Connect the phones
 

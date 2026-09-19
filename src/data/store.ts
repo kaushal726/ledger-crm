@@ -8,7 +8,8 @@ import type { SchemaContext } from "../sync/sheetSchema";
 import { hasChanges, stampChanges, type Changes } from "./changes";
 import { getLedgerIndex, itemsSummary, orderTotal } from "./ledger";
 import { META_KEYS, loadAll, writeBatch, type LoadedState } from "./persistence";
-import { emptyDB, seededDB } from "./seed";
+import { withoutUntouchedSamples } from "./legacySeeds";
+import { emptyDB } from "./seed";
 import { COLLECTIONS, type AnyRecord, type Collection, type DB } from "./types";
 
 type RecordMap<T> = Partial<Record<Collection, T[]>>;
@@ -114,17 +115,13 @@ export async function initStore(): Promise<void> {
     loaded = await loadAll();
   } catch (err) {
     reportStorageError(err);
-    loaded = { db: seededDB(), outbox: [], cursor: 0, initialized: true };
-  }
-  if (!loaded.initialized) {
-    const seed = seededDB();
-    loaded.db = { ...loaded.db, items: seed.items, settings: seed.settings };
-    save({ puts: { items: seed.items, settings: seed.settings }, meta: { [META_KEYS.initialized]: true } });
+    loaded = { db: emptyDB(), outbox: [], cursor: 0 };
   }
   state = loaded.db;
   ready = true;
   notify();
   sync.initSync({ getDB, schemaContext, applyRemote }, loaded);
+  commit(withoutUntouchedSamples);
 }
 
 /* ---------- React bindings ---------- */

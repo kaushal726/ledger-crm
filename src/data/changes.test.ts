@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { stampChanges } from "./changes";
-import { seededDB } from "./seed";
+import { emptyDB } from "./seed";
+import type { Item } from "./types";
+
+const item = (id: string, price: number): Item => ({ id, category: "General", name: id, unit: "pc", price, updatedAt: 0 });
 
 describe("stampChanges", () => {
   it("stamps only records whose reference changed, and reports deletions", () => {
-    const prev = seededDB();
+    const prev = { ...emptyDB(), items: [item("a", 10), item("b", 20), item("c", 30)] };
     const [first, second, third] = prev.items;
     const draft = { ...prev, items: [first, { ...second, price: 999 }] };
     const { next, changes } = stampChanges(prev, draft, 1234);

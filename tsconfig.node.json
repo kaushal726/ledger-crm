@@ -15,5 +15,5 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["vite.config.ts", "vite-plugins"]
+  "include": ["vite.config.ts", "vite-plugins", "src/app/brand.ts"]
 }

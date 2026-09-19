@@ -72,6 +72,22 @@
   font-size: 15px;
 }
 
+.brandText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.brandText small {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .brand img {
   border-radius: 8px;
 }
@@ -139,6 +155,12 @@
   height: 7px;
   border-radius: 50%;
   background: var(--ink-3);
+}
+
+.syncBadge[data-state="synced"] {
+  background: var(--paid-bg);
+  border-color: #abefc6;
+  color: var(--paid);
 }
 
 .syncBadge[data-state="synced"]::before { background: var(--paid); }

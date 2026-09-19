@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import { seededDB } from "../../../data/seed";
+import { emptyDB } from "../../../data/seed";
 import type { DB } from "../../../data/types";
 import { defaultOptions, REPORTS, type ExportRequest } from "../reportTypes";
 import { generateReport } from "./generate";
@@ -12,8 +12,8 @@ import { generateReport } from "./generate";
 const ROOT = fileURLToPath(new URL("../../../../", import.meta.url));
 
 function sampleDB(): DB {
-  const db = seededDB();
-  db.settings = [{ id: "business", name: "Anshuman's Book", phone: "98765 00000", address: "Main Road, Sector 12", updatedAt: 0 }];
+  const db = emptyDB();
+  db.settings = [{ id: "business", name: "Demo Traders", phone: "98765 00000", address: "Main Road, Sector 12", updatedAt: 0 }];
   db.contractors = [{ id: "k1", name: "Vikram Builders", phone: "9812345678", createdAt: 1, updatedAt: 1 }];
   db.customers = [{ id: "c1", name: "Ramesh Sharma", phone: "09876543210", address: "Sector 12", contractorId: "k1", openingBalance: 1200, createdAt: 1, updatedAt: 1 }];
   db.orders = [

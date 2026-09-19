@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FiArchive, FiCloud, FiHome, FiLock, FiPackage, FiSmartphone } from "react-icons/fi";
+import { APP_NAME } from "../../app/brand";
 import { businessOf } from "../../data/business";
 import { useDB } from "../../data/store";
 import { useUnlocked } from "../../app/pinLock";
@@ -21,7 +22,7 @@ export function MoreScreen() {
     <>
       <PageHeader title="More" />
       <ListGroup>
-        <ListRow leading={<FiHome />} title="Business profile" subtitle={businessOf(db).name} href={href("more/business")} />
+        <ListRow leading={<FiHome />} title="Business profile" subtitle={businessOf(db).name || "Add your business name for PDFs"} href={href("more/business")} />
         <ListRow leading={<FiPackage />} title="Items & prices" subtitle={`${db.items.length} items`} href={href("more/items")} />
         <ListRow leading={<FiCloud />} title="Google Sheet sync" subtitle={describeSyncStatus(sync)} right={lockIcon} href={href("more/sync")} />
         <ListRow leading={<FiArchive />} title="Backup & restore" subtitle="Export or restore all data" right={lockIcon} href={href("more/backup")} />
@@ -36,7 +37,7 @@ export function MoreScreen() {
         </>
       )}
 
-      <p className={styles.version}>Ledger · version {__APP_VERSION__}</p>
+      <p className={styles.version}>{APP_NAME} · version {__APP_VERSION__}</p>
 
       <Sheet open={showInstallHelp} onClose={() => setShowInstallHelp(false)} title="Install the app">
         <ol className={styles.steps}>

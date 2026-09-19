@@ -31,6 +31,12 @@ function popGuard(): void {
   history.back();
 }
 
+// Reloaded while a sheet was open: step off the stale guard entry so Back behaves normally.
+if ((history.state as { ledgerSheetGuard?: boolean } | null)?.ledgerSheetGuard) {
+  pendingBacks += 1;
+  history.back();
+}
+
 window.addEventListener("popstate", () => {
   if (pendingBacks > 0) {
     pendingBacks -= 1;

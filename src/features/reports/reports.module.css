@@ -28,6 +28,21 @@
 .down { color: var(--due); }
 
 /* Export */
+.notice {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: var(--warn-bg);
+  color: var(--warn);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.notice a {
+  color: inherit;
+  font-weight: 650;
+}
+
 .optionRow {
   display: flex;
   align-items: center;

@@ -1,5 +1,5 @@
 /* Entry point for PDF exports — loaded on demand, so jsPDF and the fonts aren't part of app start-up. */
-import { businessOf } from "../../../data/business";
+import { APP_NAME } from "../../../app/brand";
 import type { DB } from "../../../data/types";
 import type { ExportRequest, ReportType } from "../reportTypes";
 import { buildBill, buildStatement, type BuiltReport } from "./customerReports";
@@ -21,6 +21,6 @@ const BUILDERS: Record<ReportType, (pdf: ReportDoc, db: DB, req: ExportRequest) 
 export async function generateReport(db: DB, request: ExportRequest): Promise<GeneratedReport> {
   const pdf = await ReportDoc.create();
   const built = BUILDERS[request.type](pdf, db, request);
-  const blob = pdf.finish(businessOf(db).name);
+  const blob = pdf.finish(`Generated with ${APP_NAME}`);
   return { ...built, blob };
 }

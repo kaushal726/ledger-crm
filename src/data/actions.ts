@@ -1,7 +1,7 @@
 /* Every change the UI can make to the data. Each one is a single commit(). */
 import { uid } from "../lib/ids";
 import { removeById, sameText, upsertById } from "./listOps";
-import { seededDB } from "./seed";
+import { emptyDB } from "./seed";
 import { commit } from "./store";
 import {
   BUSINESS_SETTINGS_ID, type BusinessSettings, type Contractor, type Customer, type DB, type Item,
@@ -142,10 +142,11 @@ export function saveBusiness(input: Pick<BusinessSettings, "name" | "phone" | "a
 
 /* ---------- whole-database operations ---------- */
 
+/** Restore: replaces everything, but keeps the current business profile if the backup has none. */
 export function replaceAllData(data: DB): void {
-  commit(() => data);
+  commit((db) => ({ ...data, settings: data.settings.length ? data.settings : db.settings }));
 }
 
 export function eraseAllData(): void {
-  commit(() => seededDB());
+  commit(() => emptyDB());
 }

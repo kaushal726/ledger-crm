@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { FiDownload, FiShare2 } from "react-icons/fi";
+import { businessOf } from "../../data/business";
 import { presetRange, type PeriodPreset } from "../../data/periods";
 import type { DateRange } from "../../data/stats";
 import { getDB, useDB } from "../../data/store";
-import { useRoute } from "../../app/router";
+import { href, useRoute } from "../../app/router";
 import { todayISO } from "../../lib/dates";
 import { canShareFiles, downloadBlob, shareFile } from "../../lib/files";
 import { Button, IconButton } from "../../ui/Button";
@@ -74,6 +75,11 @@ export function ExportView() {
 
   return (
     <>
+      {!businessOf(db).name && (
+        <p className={styles.notice}>
+          Add your business name in <a href={href("more/business")}>Business profile</a> so it appears at the top of your PDFs.
+        </p>
+      )}
       <FormLabel>Report</FormLabel>
       <div className={styles.block}>
         <ChoiceChips label="Report type" value={type} onChange={changeType} options={REPORTS.map((r) => ({ value: r.type, label: r.label }))} />

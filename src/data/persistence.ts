@@ -11,7 +11,7 @@ const OUTBOX_STORE = "outbox";
 const META_STORE = "meta";
 const ALL_STORES = [...COLLECTIONS, OUTBOX_STORE, META_STORE];
 
-export const META_KEYS = { cursor: "syncCursor", initialized: "initialized" } as const;
+export const META_KEYS = { cursor: "syncCursor" } as const;
 
 export interface OutboxEntry {
   key: string;
@@ -26,7 +26,6 @@ export interface LoadedState {
   db: DB;
   outbox: OutboxEntry[];
   cursor: number;
-  initialized: boolean;
 }
 
 export interface WriteBatch {
@@ -80,8 +79,7 @@ export async function loadAll(): Promise<LoadedState> {
   const outbox = await requestResult(tx.objectStore(OUTBOX_STORE).getAll() as IDBRequest<OutboxEntry[]>);
   const meta = tx.objectStore(META_STORE);
   const cursor = Number(await requestResult(meta.get(META_KEYS.cursor))) || 0;
-  const initialized = Boolean(await requestResult(meta.get(META_KEYS.initialized)));
-  return { db, outbox, cursor, initialized };
+  return { db, outbox, cursor };
 }
 
 export async function writeBatch(batch: WriteBatch): Promise<void> {

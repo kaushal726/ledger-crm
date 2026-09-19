@@ -15,7 +15,7 @@ import styles from "./more.module.css";
 const BACK = { label: "More", href: href("more") };
 
 function setupLink(apiUrl: string): string {
-  return `${location.origin}${location.pathname}${href("connect", { url: apiUrl })}`;
+  return `${location.origin}${href("connect")}#url=${encodeURIComponent(apiUrl)}`;
 }
 
 export function SyncScreen() {
@@ -55,7 +55,7 @@ export function SyncScreen() {
       <PageHeader back={BACK} title="Google Sheet sync" actions={<LockButton />} />
       <PinGate>
         <Panel padded className={styles.block}>
-          <div className={styles.statusRow}>
+          <div className={styles.statusRow} data-state={status.state}>
             <span className={styles.statusDot} data-state={status.state} />
             <b>{describeSyncStatus(status)}</b>
           </div>

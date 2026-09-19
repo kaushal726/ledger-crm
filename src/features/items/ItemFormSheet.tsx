@@ -60,9 +60,9 @@ function ItemForm({ open, onClose, item, initialName = "", onSaved }: ItemFormSh
       footer={<Button variant="primary" block onClick={submit}>{item ? "Save changes" : "Add item"}</Button>}
     >
       <TextField label="Item name" value={name} onChange={(v) => { setName(v); setError(""); }} error={error} autoComplete="off" autoFocus={!item && !initialName} />
-      <TextField label="Category" optional value={category} onChange={setCategory} list={categoriesId} autoComplete="off" placeholder="e.g. Steel, ACC, Sand" />
+      <TextField label="Category" optional value={category} onChange={setCategory} list={categoriesId} autoComplete="off" placeholder="Groups similar items" />
       <datalist id={categoriesId}>{categories.map((c) => <option key={c} value={c} />)}</datalist>
-      <TextField label="Unit" optional value={unit} onChange={setUnit} autoComplete="off" placeholder="bag, pc, ton…" />
+      <TextField label="Unit" optional value={unit} onChange={setUnit} autoComplete="off" placeholder="pc, kg, box…" />
       <TextField label="Default price" prefix="₹" value={price} onChange={(v) => setPrice(v.replace(/[^\d.]/g, ""))} inputMode="decimal" autoFocus={!item && Boolean(initialName)} />
       {item && <Button variant="danger" block onClick={remove}>Remove item</Button>}
     </Sheet>

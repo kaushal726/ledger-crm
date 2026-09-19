@@ -2,6 +2,8 @@ import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import { APP_NAME, THEME_COLOR, WEB_MANIFEST } from "./src/app/brand.ts";
+import { appShell } from "./vite-plugins/appShell.ts";
 import { mockSheetApi } from "./vite-plugins/mockSheetApi.ts";
 import { serviceWorker } from "./vite-plugins/serviceWorker.ts";
 
@@ -17,6 +19,7 @@ export default defineConfig({
   plugins: [
     react(),
     ...(process.env.VITEST ? [] : [mockSheetApi({ port: MOCK_API_PORT, codePath: fromRoot("./apps-script/Code.gs") })]),
+    appShell({ appName: APP_NAME, description: WEB_MANIFEST.description, themeColor: THEME_COLOR, manifest: WEB_MANIFEST }),
     serviceWorker({ templatePath: fromRoot("./vite-plugins/sw-template.js") }),
   ],
   build: {

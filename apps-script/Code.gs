@@ -1,5 +1,5 @@
 /**
- * Ledger CRM — Google Sheet backend (Apps Script web app).
+ * Ledgerly — Google Sheet backend (Apps Script web app).
  *
  * The app pushes changed records here and pulls every row changed since its last pull.
  * One tab per collection, one row per record. Extra columns:
@@ -131,7 +131,11 @@ function push_(changes) {
     const nextRev = () => rev++;
     let applied = 0;
     Object.keys(byCollection).forEach(collection => {
-      applied += applyRows_(ensureSheet_(ss, SHEETS[collection]), byCollection[collection], nextRev);
+      const rows = byCollection[collection];
+      const sheet = ss.getSheetByName(SHEETS[collection]);
+      // Deletions for a tab that doesn't exist yet have nothing to mark; don't create it for them.
+      if (!sheet && rows.every(r => r[COL_DELETED] === true)) return;
+      applied += applyRows_(sheet || ensureSheet_(ss, SHEETS[collection]), rows, nextRev);
     });
     return {applied};
   });

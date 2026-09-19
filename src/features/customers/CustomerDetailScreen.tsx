@@ -36,10 +36,11 @@ export function CustomerDetailScreen({ customerId }: { customerId: string }) {
   }
 
   const account = index.accounts.get(customer.id) ?? EMPTY_ACCOUNT;
+  const business = businessOf(db);
   const contractor = customer.contractorId ? index.contractorsById.get(customer.contractorId) : undefined;
   const entries = customerLedger(db, customer.id).reverse();
   const reminder = account.balance > 0
-    ? `Namaste ${customer.name}, your pending balance with ${businessOf(db).name} is ${formatMoney(account.balance)}. Thank you.`
+    ? `Namaste ${customer.name}, your pending balance${business.name ? ` with ${business.name}` : ""} is ${formatMoney(account.balance)}. Thank you.`
     : undefined;
   const balanceLabel = account.balance > 0 ? "Balance due" : account.balance < 0 ? "Advance with you" : "All settled";
 
