@@ -7,10 +7,9 @@ import { formatMoney, formatPhone, round2 } from "../../lib/format";
 import { Avatar, type AvatarTone } from "../../ui/Avatar";
 import { Button } from "../../ui/Button";
 import { EmptyState } from "../../ui/feedback";
-import { SearchInput } from "../../ui/inputs";
 import { Fab, ListGroup, ListRow, PageHeader, StatGrid } from "../../ui/layout";
-import { ChoiceChips } from "../../ui/Segmented";
-import { SelectChip } from "../../ui/SelectChip";
+import { FilterBar } from "../../ui/FilterBar";
+import { Segmented } from "../../ui/Segmented";
 import { BalanceText } from "./BalanceText";
 import { CustomerFormSheet } from "./CustomerFormSheet";
 import {
@@ -47,10 +46,17 @@ export function CustomersScreen() {
   const totalDue = round2(db.customers.reduce((s, c) => s + Math.max(0, balanceOf(c.id)), 0));
   const list = filterCustomers(db, filters);
   const filtered = Boolean(filters.query || filters.status !== "all" || filters.contractor);
+  // Counts on every choice, so a contractor with no customers is obvious before picking it.
+  const perContractor = new Map<string, number>();
+  db.customers.forEach((c) => {
+    const key = c.contractorId ?? NO_CONTRACTOR;
+    perContractor.set(key, (perContractor.get(key) ?? 0) + 1);
+  });
   const contractorOptions = [
-    { value: "", label: "All" },
-    { value: NO_CONTRACTOR, label: "No contractor" },
-    ...[...db.contractors].sort((a, b) => a.name.localeCompare(b.name)).map((c) => ({ value: c.id, label: c.name })),
+    { value: "", label: "All", count: counts.all },
+    { value: NO_CONTRACTOR, label: "No contractor", count: perContractor.get(NO_CONTRACTOR) ?? 0 },
+    ...[...db.contractors].sort((a, b) => a.name.localeCompare(b.name))
+      .map((c) => ({ value: c.id, label: c.name, count: perContractor.get(c.id) ?? 0 })),
   ];
   const addButton = <Button variant="primary" icon={<FiPlus />} onClick={() => setAdding(true)}>Add customer</Button>;
 
@@ -64,22 +70,21 @@ export function CustomersScreen() {
         ]} />
       </div>
 
-      <div className={styles.search}>
-        <SearchInput value={filters.query} onChange={(q) => setQuery(route, { q: q || null })} placeholder="Search name or phone" />
-      </div>
-      <div className={styles.filters}>
-        <ChoiceChips
-          label="Balance"
-          scrollable
-          value={filters.status}
-          onChange={(s) => setQuery(route, { status: s === "all" ? null : s })}
-          options={CUSTOMER_STATUSES.map((s) => ({ value: s, label: STATUS_LABELS[s], count: counts[s] }))}
-        />
-        <div className={styles.filterRow}>
-          <SelectChip label="Contractor" value={filters.contractor} options={contractorOptions} onChange={(c) => setQuery(route, { contractor: c || null })} />
-          <SelectChip label="Sort" value={filters.sort} options={CUSTOMER_SORTS} onChange={(s) => setQuery(route, { sort: s === "name" ? null : s })} />
-        </div>
-      </div>
+      <FilterBar
+        className={styles.filters}
+        search={{ value: filters.query, onChange: (q) => setQuery(route, { q: q || null }), placeholder: "Search name or phone" }}
+        groups={[
+          { key: "contractor", label: "Default contractor", value: filters.contractor, options: contractorOptions, onChange: (c) => setQuery(route, { contractor: c || null }) },
+          { key: "sort", label: "Sort by", value: filters.sort, options: CUSTOMER_SORTS, onChange: (s) => setQuery(route, { sort: s === "name" ? null : s }) },
+        ]}
+      />
+      <Segmented
+        label="Balance"
+        className={styles.statusTabs}
+        value={filters.status}
+        onChange={(s) => setQuery(route, { status: s === "all" ? null : s })}
+        options={CUSTOMER_STATUSES.map((s) => ({ value: s, label: STATUS_LABELS[s], count: counts[s] }))}
+      />
 
       {list.length ? (
         <>

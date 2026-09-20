@@ -1,18 +1,9 @@
-.search {
-  margin-bottom: 12px;
-}
-
 .filters {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
-.filterRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.statusTabs {
+  margin-bottom: 14px;
 }
 
 .summary {
@@ -24,35 +15,9 @@
 }
 
 /* ---------- Detail ---------- */
-.subline {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 12px;
-  margin: -8px 0 14px;
-  font-size: 13.5px;
-  color: var(--ink-2);
-}
-
-.subline span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.contact {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.contact > * {
-  flex: 1;
-}
-
 .balance {
   padding: 16px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .balanceDue { background: var(--due-bg); border-color: var(--due-line); }

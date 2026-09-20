@@ -30,6 +30,21 @@ export function PageHeader({ title, eyebrow, back, actions }: PageHeaderProps) {
   );
 }
 
+/** Phone/address line under a page title. */
+export function PageMeta({ children }: { children: ReactNode }) {
+  return <div className={styles.meta}>{children}</div>;
+}
+
+/** Detail screens: the summary column sits beside the content on wide screens. */
+export function DetailLayout({ aside, children }: { aside: ReactNode; children: ReactNode }) {
+  return (
+    <div className={styles.detail}>
+      <div className={styles.detailAside}>{aside}</div>
+      <div className={styles.detailMain}>{children}</div>
+    </div>
+  );
+}
+
 export function Panel({ children, padded, className }: { children: ReactNode; padded?: boolean; className?: string }) {
   return <div className={cx(styles.panel, padded && styles.padded, className)}>{children}</div>;
 }

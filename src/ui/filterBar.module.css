@@ -1,0 +1,119 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search {
+  flex: 1;
+  min-width: 0;
+}
+
+.trigger {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch);
+  height: var(--touch);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 18px;
+}
+
+.triggerActive {
+  background: var(--primary-tint);
+  border-color: var(--primary-line);
+  color: var(--primary);
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.group + .group {
+  margin-top: 18px;
+}
+
+.groupLabel {
+  margin: 0 2px 8px;
+  color: var(--ink-3);
+  font-size: 12.5px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.options {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 16px;
+  border: none;
+  background: none;
+  font-size: 15px;
+  text-align: left;
+}
+
+.option + .option {
+  border-top: 1px solid var(--line-soft);
+}
+
+.option[aria-selected="true"] {
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 650;
+}
+
+.option svg {
+  flex: none;
+  font-size: 18px;
+}
+
+.optionLabel {
+  flex: 1;
+  min-width: 0;
+}
+
+.count {
+  flex: none;
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--neutral-bg);
+  color: var(--ink-3);
+  font-size: 12px;
+  font-weight: 650;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.option[aria-selected="true"] .count {
+  background: var(--primary-tint);
+  color: var(--primary);
+}

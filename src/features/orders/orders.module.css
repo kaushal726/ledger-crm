@@ -174,18 +174,23 @@
 }
 
 .cards {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 10px;
+}
+
+/* Two columns once the page is wide enough for them to stay readable. */
+@media (min-width: 1000px) {
+  .cards {
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    align-items: start;
+  }
 }
 
 /* ---------- Order card ---------- */
 .card {
-  position: relative;
   display: block;
   width: 100%;
-  overflow: hidden;
-  padding: 14px 14px 14px 17px;
+  padding: 12px 14px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -201,53 +206,46 @@
   opacity: 0.6;
 }
 
-/* Status stripe on the left edge and a lightly tinted footer */
-.card::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: var(--line);
-}
-
-.card[data-tone="pending"]::before { background: var(--accent); }
-.card[data-tone="due"]::before { background: var(--due); }
-.card[data-tone="paid"]::before { background: var(--paid); }
-
-/* Footers are half the chip tint, so a list full of dues stays calm. */
-.card[data-tone="pending"] .cardFoot { background: color-mix(in srgb, var(--accent-bg) 55%, var(--surface)); }
-.card[data-tone="due"] .cardFoot { background: color-mix(in srgb, var(--due-bg) 55%, var(--surface)); }
-.card[data-tone="paid"] .cardFoot { background: color-mix(in srgb, var(--paid-bg) 55%, var(--surface)); }
-
-.cardFoot [data-chip] {
-  background: var(--surface);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 22%, transparent);
-}
-
-.cardTop {
+.cardRow {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: 11px;
+}
+
+.cardMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardSide {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  padding-top: 1px;
 }
 
 .cardName {
   font-weight: 650;
   font-size: 15.5px;
-  min-width: 0;
   overflow-wrap: anywhere;
 }
 
 .cardAmount {
-  flex: none;
   font-weight: 700;
   font-size: 16px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
+/* Two lines of items at most; the rest is in the order sheet. */
 .cardItems {
-  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin-top: 2px;
   color: var(--ink-2);
   font-size: 13.5px;
   line-height: 1.4;
@@ -255,30 +253,62 @@
 
 .cardMeta {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 8px;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 7px;
   color: var(--ink-3);
   font-size: 12.5px;
 }
 
+.cardMeta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.cardMeta svg {
+  flex: none;
+  opacity: 0.8;
+}
+
+/* Tinted pill under the amount — the card's one colour signal. */
+.status {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--neutral-bg);
+  color: var(--neutral);
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.status[data-tone="pending"] { background: var(--accent-bg); color: var(--accent-ink); }
+.status[data-tone="due"] { background: var(--due-bg); color: var(--due); }
+.status[data-tone="paid"] { background: var(--paid-bg); color: var(--paid); }
+
+/* Only drawn when there is an action or a part payment to show. */
 .cardFoot {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 10px;
-  min-height: 36px;
-  margin: 12px -14px -14px -17px;
-  padding: 9px 14px 9px 17px;
+  margin-top: 11px;
+  padding-top: 10px;
   border-top: 1px solid var(--line-soft);
 }
 
-.cardFootInfo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.cardFoot .cardMeta {
+  margin: 0 auto 0 0;
+}
+
+.cardNote {
+  margin-right: auto;
   min-width: 0;
   font-size: 12.5px;
+  font-weight: 600;
   color: var(--ink-3);
 }
 
@@ -288,6 +318,19 @@
   justify-content: space-between;
   align-items: center;
   margin: 4px 2px 14px;
+}
+
+.detailStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.detailStatus small {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-3);
 }
 
 .detailTotal {

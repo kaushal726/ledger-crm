@@ -13,7 +13,7 @@ import { EmptyState } from "../../ui/feedback";
 import { ListGroup, ListRow, SectionTitle, StatGrid } from "../../ui/layout";
 import { Sheet } from "../../ui/Sheet";
 import { useToast } from "../../ui/Toast";
-import { OrderStatus } from "./OrderCard";
+import { StatusTag, orderMoneyNote } from "./orderStatus";
 import { useOrderSheets } from "./OrderSheets";
 import { useCompleteOrder } from "./useCompleteOrder";
 import styles from "./orders.module.css";
@@ -59,7 +59,10 @@ function OrderDetail({ order, onClose }: { order: Order; onClose: () => void }) 
   return (
     <>
       <div className={styles.detailHead}>
-        <OrderStatus order={order} money={money} />
+        <span className={styles.detailStatus}>
+          <StatusTag order={order} money={money} />
+          {orderMoneyNote(order, money) && <small className="num">{orderMoneyNote(order, money)}</small>}
+        </span>
         <span className={`${styles.detailTotal} num`}>{formatMoney(money.total)}</span>
       </div>
 

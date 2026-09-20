@@ -140,6 +140,13 @@
   }
 }
 
+/* Wide screens get a roomier column, so detail pages can sit side by side. */
+@media (min-width: 1240px) {
+  .content {
+    max-width: var(--content-max-wide);
+  }
+}
+
 /* Sync badge */
 .syncBadge {
   display: inline-flex;

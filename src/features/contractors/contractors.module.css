@@ -1,23 +1,9 @@
-.search {
-  margin-bottom: 12px;
+.period {
+  margin-bottom: 4px;
 }
 
 .filters {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
   margin-bottom: 14px;
-}
-
-.contact {
-  display: flex;
-  gap: 8px;
-  margin: -6px 0 14px;
-}
-
-.contact > * {
-  flex: 1;
-  min-width: 0;
 }
 
 .block {

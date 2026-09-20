@@ -8,9 +8,9 @@ import { href, navigate, setQuery, useRoute } from "../../app/router";
 import { telLink, whatsappLink } from "../../lib/contact";
 import { formatDate } from "../../lib/dates";
 import { formatMoney, formatPhone, formatQty, plural, round2 } from "../../lib/format";
-import { Button } from "../../ui/Button";
+import { Button, IconButton } from "../../ui/Button";
 import { EmptyState } from "../../ui/feedback";
-import { ListGroup, ListRow, PageHeader, StatGrid } from "../../ui/layout";
+import { DetailLayout, ListGroup, ListRow, PageHeader, PageMeta, StatGrid } from "../../ui/layout";
 import { Segmented } from "../../ui/Segmented";
 import { useOrderSheets } from "../orders/OrderSheets";
 import { ContractorFormSheet } from "./ContractorFormSheet";
@@ -48,28 +48,40 @@ export function ContractorDetailScreen({ contractorId }: { contractorId: string 
 
   return (
     <>
-      <PageHeader back={BACK} title={contractor.name} />
-      <div className={styles.contact}>
-        {contractor.phone && <Button size="sm" icon={<FiPhone />} onClick={() => (window.location.href = telLink(contractor.phone))}>{formatPhone(contractor.phone)}</Button>}
-        {contractor.phone && <Button size="sm" icon={<FiMessageCircle />} onClick={() => window.open(whatsappLink(contractor.phone), "_blank", "noopener")}>WhatsApp</Button>}
-        <Button size="sm" icon={<FiEdit2 />} onClick={() => setEditing(true)}>Edit</Button>
-      </div>
+      <PageHeader
+        back={BACK}
+        title={contractor.name}
+        actions={
+          <>
+            {contractor.phone && <IconButton label="Call" icon={<FiPhone />} onClick={() => (window.location.href = telLink(contractor.phone))} />}
+            {contractor.phone && <IconButton label="WhatsApp" icon={<FiMessageCircle />} onClick={() => window.open(whatsappLink(contractor.phone), "_blank", "noopener")} />}
+            <IconButton label="Edit contractor" icon={<FiEdit2 />} onClick={() => setEditing(true)} />
+          </>
+        }
+      />
+      {contractor.phone && <PageMeta><span className="num">{formatPhone(contractor.phone)}</span></PageMeta>}
 
-      <Segmented label="Period" className={styles.block} value={period} onChange={(p) => setQuery(route, { period: p === "all" ? null : p })} options={PERIODS.map((p) => ({ value: p, label: PERIOD_LABELS[p] }))} />
-      <div className={styles.block}>
-        <StatGrid columns={2} stats={[
-          { label: "Total sales", value: formatMoney(summary.total), tone: "primary" },
-          { label: "Orders", value: summary.orders.length },
-          { label: "Sites", value: summary.sites.length },
-          { label: "Customers", value: summary.customerIds.length },
-        ]} />
-      </div>
-      <Button block icon={<FiFileText />} className={styles.block} onClick={() => navigate(href("reports", { tab: "export", type: "contractor", contractor: contractor.id, period }))}>
-        Contractor report PDF
-      </Button>
-
-      <Segmented label="Breakdown" className={styles.block} value={tab} onChange={(t) => setQuery(route, { tab: t === "items" ? null : t })} options={TABS} />
-      <Breakdown tab={tab} summary={summary} contractorId={contractor.id} />
+      <DetailLayout
+        aside={
+          <>
+            <Segmented label="Period" className={styles.block} value={period} onChange={(p) => setQuery(route, { period: p === "all" ? null : p })} options={PERIODS.map((p) => ({ value: p, label: PERIOD_LABELS[p] }))} />
+            <div className={styles.block}>
+              <StatGrid columns={2} stats={[
+                { label: "Total sales", value: formatMoney(summary.total), tone: "primary" },
+                { label: "Orders", value: summary.orders.length },
+                { label: "Sites", value: summary.sites.length },
+                { label: "Customers", value: summary.customerIds.length },
+              ]} />
+            </div>
+            <Button block icon={<FiFileText />} onClick={() => navigate(href("reports", { tab: "export", type: "contractor", contractor: contractor.id, period }))}>
+              Contractor report PDF
+            </Button>
+          </>
+        }
+      >
+        <Segmented label="Breakdown" className={styles.block} value={tab} onChange={(t) => setQuery(route, { tab: t === "items" ? null : t })} options={TABS} />
+        <Breakdown tab={tab} summary={summary} contractorId={contractor.id} />
+      </DetailLayout>
 
       <ContractorFormSheet open={editing} onClose={() => setEditing(false)} contractor={contractor} />
     </>

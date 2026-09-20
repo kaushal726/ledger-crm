@@ -8,6 +8,11 @@ export function formatMoney(n: number): string {
   return "₹" + round2(n).toLocaleString(LOCALE, { maximumFractionDigits: 2 });
 }
 
+/** A running balance: "₹500", "₹100 adv" when the customer is ahead, "₹0" when settled. */
+export function formatBalance(balance: number): string {
+  return balance < 0 ? `${formatMoney(-balance)} adv` : formatMoney(balance);
+}
+
 export function formatQty(n: number): string {
   return round2(n).toLocaleString(LOCALE, { maximumFractionDigits: 2 });
 }

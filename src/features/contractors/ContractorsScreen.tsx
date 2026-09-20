@@ -11,10 +11,9 @@ import { Avatar } from "../../ui/Avatar";
 import { BarList } from "../../ui/BarList";
 import { Button } from "../../ui/Button";
 import { EmptyState } from "../../ui/feedback";
-import { SearchInput } from "../../ui/inputs";
 import { Fab, ListGroup, ListRow, PageHeader, SectionTitle } from "../../ui/layout";
-import { ChoiceChips } from "../../ui/Segmented";
-import { SelectChip } from "../../ui/SelectChip";
+import { FilterBar } from "../../ui/FilterBar";
+import { Segmented } from "../../ui/Segmented";
 import { ContractorFormSheet } from "./ContractorFormSheet";
 import styles from "./contractors.module.css";
 
@@ -61,7 +60,7 @@ export function ContractorsScreen() {
   return (
     <>
       <PageHeader title="Contractors" actions={<span className="desktop-only">{addButton}</span>} />
-      <ChoiceChips label="Period" value={period} onChange={(p) => setQuery(route, { period: p === "all" ? null : p })} options={PERIODS.map((p) => ({ value: p, label: PERIOD_LABELS[p] }))} />
+      <Segmented label="Period" className={styles.period} value={period} onChange={(p) => setQuery(route, { period: p === "all" ? null : p })} options={PERIODS.map((p) => ({ value: p, label: PERIOD_LABELS[p] }))} />
 
       {top.length > 0 && !q && (
         <>
@@ -71,19 +70,20 @@ export function ContractorsScreen() {
       )}
 
       <SectionTitle>All contractors</SectionTitle>
-      <div className={styles.search}>
-        <SearchInput value={query} onChange={(v) => setQuery(route, { q: v || null })} placeholder="Search contractors" />
-      </div>
-      <div className={styles.filters}>
-        <ChoiceChips
-          label="Activity"
-          scrollable
-          value={activity}
-          onChange={(a) => setQuery(route, { activity: a === "all" ? null : a })}
-          options={(["all", "active", "idle"] as const).map((a) => ({ value: a, label: ACTIVITY_LABELS[a], count: counts[a] }))}
-        />
-        <div><SelectChip label="Sort" value={sort} options={SORTS} onChange={(s) => setQuery(route, { sort: s === "sales" ? null : s })} /></div>
-      </div>
+      <FilterBar
+        className={styles.filters}
+        search={{ value: query, onChange: (v) => setQuery(route, { q: v || null }), placeholder: "Search contractors" }}
+        groups={[
+          {
+            key: "activity",
+            label: "Activity",
+            value: activity,
+            options: (["all", "active", "idle"] as const).map((a) => ({ value: a, label: ACTIVITY_LABELS[a], count: counts[a] })),
+            onChange: (a) => setQuery(route, { activity: a === "all" ? null : a }),
+          },
+          { key: "sort", label: "Sort by", value: sort, options: SORTS, onChange: (s) => setQuery(route, { sort: s === "sales" ? null : s }) },
+        ]}
+      />
 
       {list.length ? (
         <ListGroup>

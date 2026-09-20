@@ -37,6 +37,7 @@
   --tabbar-height: 64px;
   --sidenav-width: 232px;
   --content-max: 760px;
+  --content-max-wide: 1060px;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --touch: 44px;

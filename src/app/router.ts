@@ -7,7 +7,7 @@
  */
 import { useMemo, useSyncExternalStore } from "react";
 import { parseLocation, type Route } from "./parseLocation";
-import { afterClosingSheets } from "./sheetHistory";
+import { afterClosingSheets, noteUrl, whenUrlRestored } from "./sheetHistory";
 
 export type { Route };
 
@@ -26,6 +26,7 @@ export function navigate(to: string, options: { replace?: boolean } = {}): void 
   afterClosingSheets(() => {
     if (options.replace) history.replaceState(null, "", to);
     else history.pushState(null, "", to);
+    noteUrl(to);
     notify();
   });
 }
@@ -35,7 +36,9 @@ export function setQuery(route: Route, changes: Record<string, string | null>): 
   const params = new URLSearchParams(route.query);
   Object.entries(changes).forEach(([k, v]) => (v ? params.set(k, v) : params.delete(k)));
   const qs = params.toString();
-  history.replaceState(history.state, "", `${location.pathname}${qs ? "?" + qs : ""}`);
+  const url = `${location.pathname}${qs ? "?" + qs : ""}`;
+  history.replaceState(history.state, "", url);
+  noteUrl(url);
   notify();
 }
 
@@ -59,6 +62,7 @@ export function useRoute(): Route {
 if (location.hash.startsWith("#/")) history.replaceState(null, "", BASE + location.hash.slice(2));
 
 window.addEventListener("popstate", notify);
+whenUrlRestored(notify);
 
 document.addEventListener("click", (e) => {
   if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;

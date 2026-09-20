@@ -3,7 +3,7 @@ import { itemsSummary, type LedgerEntry } from "../../data/ledger";
 import { paymentMethodLabel } from "../../data/paymentMethods";
 import { cx } from "../../lib/cx";
 import { formatDate } from "../../lib/dates";
-import { formatMoney } from "../../lib/format";
+import { formatBalance, formatMoney } from "../../lib/format";
 import { ListGroup } from "../../ui/layout";
 import styles from "./customers.module.css";
 
@@ -42,7 +42,7 @@ export function LedgerList({ entries, onOpenOrder, onOpenPayment }: LedgerListPr
             </span>
             <span className={styles.entryRight}>
               <b className={isCredit ? styles.credit : undefined}>{isCredit ? "− " : "+ "}{formatMoney(Math.abs(entry.amount))}</b>
-              <span>{formatMoney(entry.balance)}</span>
+              <span className={entry.balance < 0 ? styles.advance : undefined}>{formatBalance(entry.balance)}</span>
             </span>
           </>
         );

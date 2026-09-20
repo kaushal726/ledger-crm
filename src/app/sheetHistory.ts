@@ -16,6 +16,27 @@ let guardInHistory = false;
 let pendingBacks = 0;
 let afterUnwind: (() => void) | null = null;
 let nextId = 1;
+let urlWhileOpen: string | null = null;
+let onUrlRestored: (() => void) | null = null;
+
+/* A screen's filters live in the URL, and a query change made while a sheet is open only
+ * rewrites the guard entry. Popping the guard would put the old URL back, so it is
+ * re-applied to the entry underneath. */
+export function noteUrl(url: string): void {
+  if (stack.length) urlWhileOpen = url;
+}
+
+export function whenUrlRestored(listener: () => void): void {
+  onUrlRestored = listener;
+}
+
+function restoreUrl(): void {
+  const wanted = urlWhileOpen;
+  urlWhileOpen = null;
+  if (!wanted || wanted === location.pathname + location.search) return;
+  history.replaceState(history.state, "", wanted);
+  onUrlRestored?.();
+}
 
 function ensureGuard(): void {
   if (stack.length && !guardInHistory && pendingBacks === 0) {
@@ -40,10 +61,13 @@ if ((history.state as { ledgerSheetGuard?: boolean } | null)?.ledgerSheetGuard) 
 window.addEventListener("popstate", () => {
   if (pendingBacks > 0) {
     pendingBacks -= 1;
-    if (pendingBacks === 0 && afterUnwind) {
-      const run = afterUnwind;
-      afterUnwind = null;
-      run();
+    if (pendingBacks === 0) {
+      restoreUrl();
+      if (afterUnwind) {
+        const run = afterUnwind;
+        afterUnwind = null;
+        run();
+      }
     }
     ensureGuard();
     return;
@@ -51,6 +75,7 @@ window.addEventListener("popstate", () => {
   if (!guardInHistory) return; // an ordinary Back between screens
   guardInHistory = false;
   stack.pop()?.close();
+  if (!stack.length) restoreUrl();
   ensureGuard();
 });
 
