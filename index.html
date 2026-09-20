@@ -12,7 +12,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="%APP_NAME%" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <!-- Transparent status bar: the page background (light or dark) shows through it.
+         Safe-area padding keeps content clear of it — see --safe-top. -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="color-scheme" content="light dark" />
     <script>
       // Before first paint: no white flash on a dark phone. Mirrors src/app/theme.ts.
