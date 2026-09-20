@@ -1,4 +1,5 @@
 // Runs apps-script/Code.gs against the in-memory spreadsheet used by the dev mock.
+process.env.TZ = "Asia/Kolkata";   // the script and the Sheet share one time zone
 import { fileURLToPath } from "node:url";
 import { beforeEach, describe, expect, it } from "vitest";
 import { FakeSpreadsheet } from "./fakeSpreadsheet.ts";
@@ -50,6 +51,24 @@ describe("Code.gs", () => {
     const res = push([item("a", 1), { collection: "widgets", row: { id: "w1", updatedAt: 1 } }]);
     expect(res).toMatchObject({ ok: true, applied: 1, skipped: ["widgets"] });
     expect(spreadsheet.getSheetByName("widgets")).toBeNull();
+  });
+
+  it("stores a yyyy-mm-dd field as a real date cell and reads the same day back", () => {
+    push([{ collection: "orders", row: { id: "o1", date: "2026-09-20", customerId: "c1", updatedAt: 1 } }]);
+    const sheet = spreadsheet.getSheetByName("Orders")!;
+    const dateCell = sheet.cells[1][sheet.cells[0].indexOf("date")];
+    expect(Object.prototype.toString.call(dateCell)).toBe("[object Date]");   // built inside the script's vm realm
+    expect(pull().data.orders[0].date).toBe("2026-09-20");
+  });
+
+  it("converts date text written by older versions into real date cells", () => {
+    push([{ collection: "orders", row: { id: "o1", date: "2026-09-20", updatedAt: 1 } }]);
+    const sheet = spreadsheet.getSheetByName("Orders")!;
+    const column = sheet.cells[0].indexOf("date");
+    sheet.getRange(2, column + 1).setValue("2026-09-20");   // as an older script would have left it
+    expect(script.formatDateColumns()).toBe(1);
+    expect(Object.prototype.toString.call(sheet.cells[1][column])).toBe("[object Date]");
+    expect(pull().data.orders[0].date).toBe("2026-09-20");
   });
 
   it("rejects unknown actions", () => {

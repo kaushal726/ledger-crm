@@ -30,6 +30,8 @@
   --warn-bg: #fffaeb;
 
   --surface-hover: #fafbfc;
+  /* Floating things (FAB actions, menus) that must stand out over a dimmed page. */
+  --raised: #ffffff;
   --line-strong: #d3d7de;
   --line-dashed: #d8dce2;
   --track: #e7ebf0;
@@ -97,6 +99,7 @@
   --warn-bg: #2a2114;
 
   --surface-hover: #1d212a;
+  --raised: #2a313d;
   --line-strong: #39404c;
   --line-dashed: #39404c;
   --track: #232831;

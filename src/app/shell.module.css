@@ -188,6 +188,8 @@
 /* Update available bar */
 .update {
   position: fixed;
+  overflow: hidden;
+  animation: updateIn 0.28s ease-out;
   left: 16px;
   right: 16px;
   top: calc(12px + var(--safe-top));
@@ -207,7 +209,36 @@
   box-shadow: var(--shadow-float);
 }
 
+.updateIcon {
+  flex: none;
+  display: flex;
+  font-size: 20px;
+}
+
+.updateBusy .updateIcon {
+  animation: updatePulse 1.1s ease-in-out infinite;
+}
+
+.updateText {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.updateText b {
+  display: block;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.updateText small {
+  font-size: 12px;
+  opacity: 0.72;
+}
+
 .updateButton {
+  flex: none;
+  min-width: 84px;
   min-height: 36px;
   padding: 0 14px;
   border: none;
@@ -215,6 +246,69 @@
   background: var(--on-primary);
   color: var(--primary);
   font-weight: 700;
+}
+
+.updateButton:disabled {
+  opacity: 0.85;
+}
+
+.updateSpinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  vertical-align: -3px;
+  animation: updateSpin 0.7s linear infinite;
+}
+
+/* Indeterminate line along the bottom while the new build swaps in. */
+.updateProgress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: color-mix(in srgb, var(--on-primary) 25%, transparent);
+}
+
+.updateProgress::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 35%;
+  background: var(--on-primary);
+  animation: updateSlide 1.1s ease-in-out infinite;
+}
+
+@keyframes updateIn {
+  from { opacity: 0; transform: translateY(-14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes updateSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes updatePulse {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(2px); opacity: 0.65; }
+}
+
+@keyframes updateSlide {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(320%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .update,
+  .updateBusy .updateIcon,
+  .updateSpinner,
+  .updateProgress::after {
+    animation: none;
+  }
 }
 
 /* Boot skeleton */

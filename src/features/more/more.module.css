@@ -60,8 +60,49 @@
   vertical-align: middle;
 }
 
+/* Keeps the credit line at the foot of the screen, not floating under the content. */
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - var(--tabbar-height) - var(--safe-top) - var(--safe-bottom) - 48px);
+}
+
+.footer {
+  margin-top: auto;
+  padding-top: 32px;
+  opacity: 0.55;
+}
+
+.credit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.heart {
+  color: var(--due);
+  font-size: 15px;
+  stroke-width: 2.4;
+  animation: heartbeat 2.4s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 12%, 100% { transform: scale(1); }
+  6% { transform: scale(1.22); }
+  9% { transform: scale(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heart { animation: none; }
+}
+
 .version {
-  margin: 28px 0 0;
+  margin: 4px 0 0;
   text-align: center;
   font-size: 12px;
   color: var(--ink-3);
@@ -90,4 +131,10 @@
   color: var(--warn);
   font-size: 13px;
   line-height: 1.45;
+}
+
+@media (min-width: 900px) {
+  .screen {
+    min-height: calc(100dvh - 112px);
+  }
 }

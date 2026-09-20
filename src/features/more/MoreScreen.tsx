@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FiArchive, FiCloud, FiHardDrive, FiHome, FiLock, FiPackage, FiSmartphone } from "react-icons/fi";
+import { FiArchive, FiCloud, FiHardDrive, FiHeart, FiHome, FiLock, FiPackage, FiSmartphone } from "react-icons/fi";
 import { APP_NAME } from "../../app/brand";
 import { businessOf } from "../../data/business";
 import { useDB } from "../../data/store";
@@ -32,7 +32,7 @@ export function MoreScreen() {
   const counts = [plural(db.orders.length, "order"), plural(db.payments.length, "payment"), plural(db.customers.length, "customer")].join(" · ");
 
   return (
-    <>
+    <div className={styles.screen}>
       <PageHeader title="More" />
       <ListGroup>
         <ListRow leading={<FiHome />} title="Business profile" subtitle={businessOf(db).name || "Add your business name for PDFs"} href={href("more/business")} />
@@ -50,7 +50,12 @@ export function MoreScreen() {
         )}
       </ListGroup>
 
-      <p className={styles.version}>{APP_NAME} · version {__APP_VERSION__}</p>
+      <footer className={styles.footer}>
+        <p className={styles.credit}>
+          Crafted with <FiHeart aria-label="love" className={styles.heart} /> by Kaushal
+        </p>
+        <p className={styles.version}>{APP_NAME} · version {__APP_VERSION__}</p>
+      </footer>
 
       <Sheet open={showInstallHelp} onClose={() => setShowInstallHelp(false)} title="Install the app">
         <ol className={styles.steps}>
@@ -58,6 +63,6 @@ export function MoreScreen() {
           <li><b>Android (Chrome):</b> open the ⋮ menu, then “Install app” or “Add to Home screen”.</li>
         </ol>
       </Sheet>
-    </>
+    </div>
   );
 }

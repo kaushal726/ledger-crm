@@ -1,8 +1,9 @@
 /* Maps app records <-> Google Sheet rows.
  *
  * Rows stay readable: one column per field, line items as JSON, and a few display
- * columns (customer name, items, total…) written for people reading the Sheet.
- * Display columns are ignored when rows are read back, so editing them has no effect.
+ * columns (customer name, items, total, when it last changed…) written for people reading
+ * the Sheet. Display columns are ignored when rows are read back, so editing them has no
+ * effect. Dates go over as yyyy-mm-dd and the Apps Script writes them as real date cells.
  */
 import type { AnyRecord, Collection, Customer, Order, Payment } from "../data/types";
 
@@ -29,6 +30,13 @@ interface CollectionSpec {
 }
 
 const META_FIELDS = ["deleted", "_rev"];
+/** Written for people reading the Sheet; ignored when rows are read back. */
+const UPDATED_ON = "updatedOn";
+
+function readableTime(ms: number): string {
+  if (!ms) return "";
+  return new Date(ms).toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+}
 
 const spec = (s: Partial<CollectionSpec>): CollectionSpec => ({
   leading: [], numbers: ["updatedAt"], json: [], nullable: [], defaults: {}, displayKeys: [], ...s,
@@ -91,6 +99,7 @@ export function toRow(collection: Collection, record: AnyRecord, ctx: SchemaCont
   s.leading.forEach((k) => { row[k] = toCell(source[k]); });
   Object.assign(row, s.display?.(record, ctx));
   Object.keys(source).forEach((k) => { if (!(k in row)) row[k] = toCell(source[k]); });
+  row[UPDATED_ON] = readableTime(Number(source.updatedAt) || 0);
   return row;
 }
 
@@ -107,7 +116,7 @@ export function fromRow<C extends Collection>(collection: C, row: SheetRow): Any
   const s = SPECS[collection];
   const record: Record<string, unknown> = {};
   Object.keys(row).forEach((k) => {
-    if (META_FIELDS.includes(k) || s.displayKeys.includes(k)) return;
+    if (k === UPDATED_ON || META_FIELDS.includes(k) || s.displayKeys.includes(k)) return;
     const v = row[k];
     if (s.json.includes(k)) record[k] = parseJson(v);
     else if (s.numbers.includes(k)) record[k] = Number(v) || 0;

@@ -68,6 +68,9 @@ npm run build       # production build in dist/
 5. Copy the **Web app URL** (ends in `/exec`).
 
 Tabs (Customers, Contractors, Items, Orders, Payments, Cash, Settings) are created when data first arrives.
+Dates are written as real date cells ("20 Sept 2026"), and every row carries a readable
+`updatedOn` column next to the raw `updatedAt`. Rows written by an older version of the
+script keep plain text — the Sheet's **Ledgerly → Format date columns** menu converts them.
 
 **Updating `Code.gs` later:** **Deploy → Manage deployments → Edit (pencil) → Version: New version → Deploy**.
 This keeps the same URL. A *new deployment* would get a new URL, and every phone would need to reconnect.

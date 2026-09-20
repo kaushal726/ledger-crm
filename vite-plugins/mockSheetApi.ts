@@ -18,6 +18,7 @@ export interface AppsScript {
   doGet(e: { parameter: Record<string, string> }): { text: string };
   doPost(e: { postData: { contents: string } }): { text: string };
   onEdit(e: { range: unknown }): void;
+  formatDateColumns(): number;
 }
 
 export function loadAppsScript(codePath: string, spreadsheet: FakeSpreadsheet): AppsScript {
@@ -29,7 +30,7 @@ export function loadAppsScript(codePath: string, spreadsheet: FakeSpreadsheet): 
       MimeType: { JSON: "application/json" },
       createTextOutput: (text: string) => ({ text, setMimeType() { return this; } }),
     },
-    Utilities: { getUuid: () => crypto.randomUUID(), formatDate: (d: Date) => d.toISOString().slice(0, 10) },
+    Utilities: { getUuid: () => crypto.randomUUID(), formatDate: (d: Date, tz: string) => d.toLocaleDateString("en-CA", { timeZone: tz }) },
   });
   vm.runInContext(fs.readFileSync(codePath, "utf8"), context, { filename: "Code.gs" });
   return context as unknown as AppsScript;

@@ -41,6 +41,12 @@ describe("sheet schema", () => {
     expect(fromRow("cash", { id: "k9", amount: "250" })).toMatchObject({ amount: 250, direction: "in", method: "cash" });
   });
 
+  it("adds a readable last-changed column that is ignored on the way back", () => {
+    const row = toRow("payments", { ...payment, updatedAt: Date.UTC(2026, 8, 20, 10, 42) }, ctx);
+    expect(String(row.updatedOn)).toMatch(/20 Sept? 2026/);
+    expect("updatedOn" in fromRow("payments", row)).toBe(false);
+  });
+
   it("recognises deleted rows", () => {
     expect(isDeletedRow({ id: "x", deleted: true })).toBe(true);
     expect(isDeletedRow({ id: "x", deleted: "TRUE" })).toBe(true);

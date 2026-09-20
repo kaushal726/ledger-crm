@@ -28,6 +28,8 @@ const LOCK_WAIT_MS = 30000;
 const FORMAT_TEXT = "@";
 const FORMAT_INTEGER = "0";
 const FORMAT_DECIMAL = "0.##########";
+const FORMAT_DATE = "dd MMM yyyy";
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const FORMULA_LIKE = /^[=+\-@]/;   // would be parsed as a formula by Sheets
 const TEXT_PREFIX = "'";
 
@@ -250,9 +252,11 @@ function writeCells_(sheet, rowNumber, headers, fields) {
   });
 }
 
-// Text stays text (phone numbers keep leading zeros, dates don't get reinterpreted); numbers stay numbers.
+// Numbers stay numbers, yyyy-mm-dd becomes a real date ("20 Sep 2026", still sortable and
+// filterable), and everything else stays text so phone numbers keep their leading zeros.
 function formatFor_(value) {
   if (typeof value === "number") return Number.isInteger(value) ? FORMAT_INTEGER : FORMAT_DECIMAL;
+  if (typeof value === "string" && ISO_DATE.test(value)) return FORMAT_DATE;
   return FORMAT_TEXT;
 }
 
@@ -260,7 +264,47 @@ function toCell_(value) {
   if (value === null || value === undefined) return "";
   if (typeof value === "number" || typeof value === "boolean") return value;
   const text = typeof value === "object" ? JSON.stringify(value) : String(value);
+  if (ISO_DATE.test(text)) return isoToDate_(text);
   return FORMULA_LIKE.test(text) ? TEXT_PREFIX + text : text;
+}
+
+// Built from the parts, so the day can't shift with the script's time zone.
+function isoToDate_(text) {
+  const parts = text.split("-");
+  return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+}
+
+/* ---------- menu ---------- */
+
+function onOpen() {
+  SpreadsheetApp.getUi().createMenu("Ledgerly").addItem("Format date columns", "formatDateColumns").addToUi();
+}
+
+// Rows written before this script wrote real dates keep plain text; this converts them so a
+// whole date column reads (and sorts) the same way.
+function formatDateColumns() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let converted = 0;
+  Object.keys(SHEETS).forEach(collection => {
+    const sheet = ss.getSheetByName(SHEETS[collection]);
+    if (!sheet || sheet.getLastRow() < 2) return;
+    const column = readHeaders_(sheet).indexOf("date") + 1;
+    if (!column) return;
+    const range = sheet.getRange(2, column, sheet.getLastRow() - 1, 1);
+    const values = range.getValues().map(row => {
+      const value = row[0];
+      if (typeof value !== "string" || !ISO_DATE.test(value)) return row;
+      converted++;
+      return [isoToDate_(value)];
+    });
+    range.setNumberFormat(FORMAT_DATE).setValues(values);
+  });
+  try {
+    ss.toast(converted + " date cells formatted");
+  } catch (err) {
+    // No spreadsheet UI (tests, or a trigger); the count is the useful part.
+  }
+  return converted;
 }
 
 /* ---------- edits made directly in the Sheet ---------- */
