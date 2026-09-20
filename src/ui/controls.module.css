@@ -1,7 +1,7 @@
 /* Segmented control */
 .segmented {
   display: flex;
-  background: #e7ebf0;
+  background: var(--track);
   border-radius: 12px;
   padding: 3px;
   gap: 2px;
@@ -22,7 +22,7 @@
 .segment[aria-pressed="true"] {
   background: var(--surface);
   color: var(--primary);
-  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.08);
+  box-shadow: var(--shadow-raised);
 }
 
 .count {
@@ -31,7 +31,7 @@
   margin-left: 6px;
   padding: 1px 6px;
   border-radius: 999px;
-  background: rgba(35, 53, 68, 0.08);
+  background: var(--count-bg);
   color: var(--ink-2);
   font-size: 11.5px;
   font-weight: 650;
@@ -80,12 +80,12 @@
 .chip[aria-pressed="true"] {
   background: var(--primary);
   border-color: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
 }
 
 .chip[aria-pressed="true"] > .count {
-  background: rgba(255, 255, 255, 0.18);
-  color: #fff;
+  background: color-mix(in srgb, var(--on-primary) 18%, transparent);
+  color: var(--on-primary);
 }
 
 /* Toggle switch */
@@ -96,7 +96,7 @@
   flex: none;
   border: none;
   border-radius: 999px;
-  background: #d0d5dd;
+  background: var(--track-strong);
   padding: 0;
   transition: background 0.15s ease;
 }
@@ -109,8 +109,8 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  background: var(--knob);
+  box-shadow: var(--shadow-raised);
   transition: transform 0.15s ease;
 }
 

@@ -46,10 +46,10 @@ const SPECS: Record<Collection, CollectionSpec> = {
   items: spec({ leading: ["category", "name"], numbers: ["price", "updatedAt"] }),
   orders: spec({
     leading: ["date"],
-    numbers: ["createdAt", "updatedAt"],
+    numbers: ["discount", "createdAt", "updatedAt"],
     json: ["lineItems"],
     nullable: ["contractorId"],
-    defaults: { status: "pending" },
+    defaults: { status: "pending", discountType: "amount" },
     displayKeys: ["customerName", "customerPhone", "contractorName", "items", "total"],
     display: (r, ctx) => {
       const o = r as Order;
@@ -69,6 +69,11 @@ const SPECS: Record<Collection, CollectionSpec> = {
     defaults: { method: "cash" },
     displayKeys: ["customerName"],
     display: (r, ctx) => ({ customerName: ctx.customerName((r as Payment).customerId) }),
+  }),
+  cash: spec({
+    leading: ["date", "direction"],
+    numbers: ["amount", "createdAt", "updatedAt"],
+    defaults: { direction: "in", method: "cash" },
   }),
   settings: spec({}),
 };

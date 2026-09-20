@@ -16,6 +16,7 @@ const SHEETS = {
   items: "Items",
   orders: "Orders",
   payments: "Payments",
+  cash: "Cash",
   settings: "Settings",
 };
 const COL_ID = "id";
@@ -122,8 +123,12 @@ function push_(changes) {
   return withLock_(() => {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const byCollection = {};
+    const skipped = {};
     changes.forEach(c => {
-      if (!SHEETS[c.collection] || !c.row || !c.row[COL_ID]) return;
+      if (!c || !c.row || !c.row[COL_ID]) return;
+      // A newer app can send a collection this script has never heard of. Say so, so the
+      // app keeps those rows queued until this script is updated, instead of losing them.
+      if (!SHEETS[c.collection]) return void (skipped[c.collection] = true);
       (byCollection[c.collection] = byCollection[c.collection] || []).push(c.row);
     });
 
@@ -137,7 +142,7 @@ function push_(changes) {
       if (!sheet && rows.every(r => r[COL_DELETED] === true)) return;
       applied += applyRows_(sheet || ensureSheet_(ss, SHEETS[collection]), rows, nextRev);
     });
-    return {applied};
+    return {applied, skipped: Object.keys(skipped)};
   });
 }
 

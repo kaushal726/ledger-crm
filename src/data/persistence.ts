@@ -6,7 +6,7 @@ import { COLLECTIONS, type AnyRecord, type Collection, type DB } from "./types";
 import { emptyDB } from "./seed";
 
 const DB_NAME = "ledger-crm";
-const DB_VERSION = 1;
+const DB_VERSION = 2;   // 2 added the cash store
 const OUTBOX_STORE = "outbox";
 const META_STORE = "meta";
 const ALL_STORES = [...COLLECTIONS, OUTBOX_STORE, META_STORE];

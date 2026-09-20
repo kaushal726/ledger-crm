@@ -10,5 +10,5 @@ export const DEFAULT_BUSINESS: BusinessSettings = {
 };
 
 export function emptyDB(): DB {
-  return { customers: [], contractors: [], items: [], orders: [], payments: [], settings: [] };
+  return { customers: [], contractors: [], items: [], orders: [], payments: [], cash: [], settings: [] };
 }

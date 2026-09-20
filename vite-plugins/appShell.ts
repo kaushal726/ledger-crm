@@ -1,5 +1,5 @@
 /* Build-time pieces of the app shell:
- * - fills %APP_NAME% / %APP_DESCRIPTION% / %THEME_COLOR% in index.html from src/app/brand.ts
+ * - fills %APP_NAME% / %APP_DESCRIPTION% / %THEME_COLOR%(_DARK) in index.html from src/app/brand.ts
  * - serves (dev) and emits (build) manifest.webmanifest from the same source
  * - emits 404.html as a copy of index.html, so GitHub Pages serves the app for any path
  *   (a reload on /customers/abc would otherwise hit GitHub's own 404 page)
@@ -13,6 +13,7 @@ interface AppShellOptions {
   appName: string;
   description: string;
   themeColor: string;
+  themeColorDark: string;
   manifest: object;
 }
 
@@ -29,7 +30,8 @@ export function appShell(options: AppShellOptions): Plugin {
       return html
         .replaceAll("%APP_NAME%", options.appName)
         .replaceAll("%APP_DESCRIPTION%", options.description)
-        .replaceAll("%THEME_COLOR%", options.themeColor);
+        .replaceAll("%THEME_COLOR%", options.themeColor)
+        .replaceAll("%THEME_COLOR_DARK%", options.themeColorDark);
     },
     configureServer(server) {
       server.middlewares.use((req, res, next) => {

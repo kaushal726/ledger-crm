@@ -1,4 +1,6 @@
 :root {
+  color-scheme: light;
+
   --bg: #f4f5f7;
   --surface: #ffffff;
   --surface-sunken: #e9ebef;
@@ -27,11 +29,30 @@
   --warn: #b54708;
   --warn-bg: #fffaeb;
 
+  --surface-hover: #fafbfc;
+  --line-strong: #d3d7de;
+  --line-dashed: #d8dce2;
+  --track: #e7ebf0;
+  --track-strong: #d0d5dd;
+  --knob: #ffffff;
+  /* Text and icons drawn on a --primary fill; flips with the theme. */
+  --on-primary: #ffffff;
+  --count-bg: rgba(35, 53, 68, 0.08);
+  --overlay: rgba(17, 24, 39, 0.42);
+  --toast-bg: #1f2937;
+  --toast-ink: #ffffff;
+  --toast-warn: #f6d08f;
+  --due-strong: #912018;
+  --due-border: #f5c6c1;
+  --skeleton: #eaecf0;
+
   --radius-lg: 16px;
   --radius: 14px;
   --radius-sm: 10px;
   --shadow-float: 0 6px 16px rgba(35, 53, 68, 0.24);
   --shadow-sheet: 0 -8px 30px rgba(16, 24, 40, 0.12);
+  --shadow-card: 0 4px 14px rgba(16, 24, 40, 0.08);
+  --shadow-raised: 0 1px 2px rgba(16, 24, 40, 0.08);
   --font: -apple-system, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   --tabbar-height: 64px;
@@ -41,6 +62,60 @@
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --touch: 44px;
+}
+
+/* Dark theme. src/app/theme.ts resolves the phone's setting (or the choice made in More)
+ * into <html data-theme>, so the values live in one place. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1116;
+  --surface: #171a21;
+  --surface-sunken: #1f232b;
+  --line: #272c35;
+  --line-soft: #1f232b;
+  --ink: #e9ebef;
+  --ink-2: #a9b0bc;
+  --ink-3: #7d8593;
+  --primary: #d3dfeb;
+  --primary-hover: #e4ecf4;
+  --primary-soft: #1e2631;
+  --primary-tint: #232d3a;
+  --primary-line: #313c4b;
+  --accent: #e0a44a;
+  --accent-bg: #2a2114;
+  --accent-ink: #e8b871;
+  --accent-line: #3d3020;
+  --due: #ff7a6d;
+  --due-bg: #2b1815;
+  --due-line: #45241f;
+  --paid: #4ed292;
+  --paid-bg: #12251b;
+  --paid-line: #1f3c2c;
+  --neutral-bg: #232831;
+  --neutral: #aab2be;
+  --warn: #e5a44a;
+  --warn-bg: #2a2114;
+
+  --surface-hover: #1d212a;
+  --line-strong: #39404c;
+  --line-dashed: #39404c;
+  --track: #232831;
+  --track-strong: #39404c;
+  --knob: #e9ebef;
+  --on-primary: #10131a;
+  --count-bg: rgba(255, 255, 255, 0.1);
+  --overlay: rgba(0, 0, 0, 0.6);
+  --toast-bg: #2c323d;
+  --toast-ink: #f3f5f8;
+  --toast-warn: #f6d08f;
+  --due-strong: #ff9a90;
+  --due-border: #4a2622;
+  --skeleton: #232831;
+
+  --shadow-float: 0 6px 16px rgba(0, 0, 0, 0.55);
+  --shadow-sheet: 0 -8px 30px rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 *,

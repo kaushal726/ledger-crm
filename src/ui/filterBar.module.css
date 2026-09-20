@@ -39,7 +39,7 @@
   padding: 0 5px;
   border-radius: 999px;
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
   font-size: 11px;
   font-weight: 700;
   line-height: 18px;
@@ -59,61 +59,3 @@
   letter-spacing: 0.04em;
 }
 
-.options {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.option {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-  min-height: 52px;
-  padding: 0 16px;
-  border: none;
-  background: none;
-  font-size: 15px;
-  text-align: left;
-}
-
-.option + .option {
-  border-top: 1px solid var(--line-soft);
-}
-
-.option[aria-selected="true"] {
-  background: var(--primary-soft);
-  color: var(--primary);
-  font-weight: 650;
-}
-
-.option svg {
-  flex: none;
-  font-size: 18px;
-}
-
-.optionLabel {
-  flex: 1;
-  min-width: 0;
-}
-
-.count {
-  flex: none;
-  min-width: 22px;
-  padding: 1px 7px;
-  border-radius: 999px;
-  background: var(--neutral-bg);
-  color: var(--ink-3);
-  font-size: 12px;
-  font-weight: 650;
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-}
-
-.option[aria-selected="true"] .count {
-  background: var(--primary-tint);
-  color: var(--primary);
-}

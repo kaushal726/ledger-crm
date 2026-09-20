@@ -201,7 +201,7 @@
   padding: 10px 10px 10px 16px;
   border-radius: 14px;
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
   font-size: 14px;
   font-weight: 500;
   box-shadow: var(--shadow-float);
@@ -212,7 +212,7 @@
   padding: 0 14px;
   border: none;
   border-radius: 10px;
-  background: #fff;
+  background: var(--on-primary);
   color: var(--primary);
   font-weight: 700;
 }

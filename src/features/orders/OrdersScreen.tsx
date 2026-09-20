@@ -1,4 +1,4 @@
-import { FiClipboard, FiPlus } from "react-icons/fi";
+import { FiArrowDownLeft, FiArrowUpRight, FiClipboard, FiPlus, FiRepeat } from "react-icons/fi";
 import { displayName } from "../../data/business";
 import { EMPTY_ORDER_MONEY, getLedgerIndex } from "../../data/ledger";
 import { daySummary } from "../../data/stats";
@@ -12,6 +12,7 @@ import { Button } from "../../ui/Button";
 import { EmptyState } from "../../ui/feedback";
 import { Fab, PageHeader, StatGrid } from "../../ui/layout";
 import { Segmented } from "../../ui/Segmented";
+import { CashSection } from "../cash/CashSection";
 import { DateSwitcher } from "./DateSwitcher";
 import { OrderCard } from "./OrderCard";
 import { useOrderSheets } from "./OrderSheets";
@@ -44,6 +45,14 @@ export function OrdersScreen() {
   const day = daySummary(db, date);
   const orders = day.orders.filter(FILTERS[filter]);
   const newOrder = () => sheets.newOrder({ date });
+  const cashActions = {
+    label: "Payment in or out",
+    icon: <FiRepeat aria-hidden />,
+    items: [
+      { label: "Payment in", icon: <FiArrowDownLeft />, onClick: () => sheets.addCash({ direction: "in" as const, date }) },
+      { label: "Payment out", icon: <FiArrowUpRight />, onClick: () => sheets.addCash({ direction: "out" as const, date }) },
+    ],
+  };
 
   return (
     <>
@@ -53,16 +62,23 @@ export function OrdersScreen() {
         actions={
           <>
             <span className="mobile-only"><SyncBadge /></span>
+            <span className="desktop-only">
+              <Button icon={<FiArrowDownLeft />} onClick={() => sheets.addCash({ direction: "in", date })}>Payment in</Button>
+            </span>
+            <span className="desktop-only">
+              <Button icon={<FiArrowUpRight />} onClick={() => sheets.addCash({ direction: "out", date })}>Payment out</Button>
+            </span>
             <Button variant="primary" icon={<FiPlus />} className="desktop-only" onClick={newOrder}>New order</Button>
           </>
         }
       />
       <DateSwitcher date={date} onChange={(d) => setQuery(route, { date: d === todayISO() ? null : d })} />
       <div className={styles.summary}>
-        <StatGrid stats={[
+        <StatGrid columns={day.paidOut > 0 ? 2 : 3} stats={[
           { label: "Sales", value: formatMoney(day.sales), tone: "primary" },
-          { label: "Collected", value: formatMoney(day.collected), tone: day.collected > 0 ? "paid" : undefined },
-          { label: "Due", value: formatMoney(day.due), tone: day.due > 0 ? "due" : undefined },
+          { label: "Collected", value: formatMoney(day.collected), tone: day.collected > 0 ? "paid" : undefined, sub: day.paidOut > 0 ? `In hand ${formatMoney(day.inHand)}` : undefined },
+          ...(day.paidOut > 0 ? [{ label: "Paid out", value: formatMoney(day.paidOut), tone: "accent" as const }] : []),
+          { label: "Due", value: formatMoney(day.due), tone: day.due > 0 ? "due" as const : undefined },
         ]} />
       </div>
       <Segmented
@@ -94,7 +110,9 @@ export function OrdersScreen() {
       ) : (
         <EmptyState icon={<FiClipboard />} {...EMPTY_COPY[filter]} />
       )}
-      <Fab label="New order" icon={<FiPlus />} onClick={newOrder} />
+      <CashSection date={date} day={day} />
+
+      <Fab label="New order" icon={<FiPlus />} onClick={newOrder} more={cashActions} />
     </>
   );
 }

@@ -43,8 +43,21 @@ export function lineAmount(li: LineItem): number {
   return round2((Number(li.qty) || 0) * (Number(li.price) || 0));
 }
 
-export function orderTotal(order: Order): number {
+/** What the items come to, before any discount. */
+export function orderSubtotal(order: Order): number {
   return round2(order.lineItems.reduce((sum, li) => sum + lineAmount(li), 0));
+}
+
+/** The discount in rupees, never negative and never more than the items come to. */
+export function orderDiscount(order: Order): number {
+  const subtotal = orderSubtotal(order);
+  const entered = Number(order.discount) || 0;
+  const amount = order.discountType === "percent" ? (subtotal * entered) / 100 : entered;
+  return round2(Math.min(Math.max(amount, 0), subtotal));
+}
+
+export function orderTotal(order: Order): number {
+  return round2(orderSubtotal(order) - orderDiscount(order));
 }
 
 export function itemsSummary(order: Order): string {

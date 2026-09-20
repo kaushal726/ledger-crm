@@ -1,6 +1,6 @@
 /* Editable form state for an order, and its conversion to/from the stored order. */
 import type { OrderInput } from "../../data/actions";
-import type { DB, Item, Order, PaymentMethod } from "../../data/types";
+import type { DB, DiscountType, Item, Order, PaymentMethod } from "../../data/types";
 import { todayISO } from "../../lib/dates";
 import { parseAmount, round2 } from "../../lib/format";
 import { uid } from "../../lib/ids";
@@ -22,6 +22,8 @@ export interface OrderDraft {
   note: string;
   status: OrderInput["status"];
   lines: DraftLine[];
+  discount: string;
+  discountType: DiscountType;
   payMethod: PaymentMethod | null;
   payAmount: string;
 }
@@ -47,6 +49,8 @@ export function newDraft(db: DB, prefill: OrderPrefill = {}): OrderDraft {
     note: "",
     status: "pending",
     lines: [],
+    discount: "",
+    discountType: "amount",
     payMethod: null,
     payAmount: "",
   };
@@ -61,6 +65,8 @@ export function draftFromOrder(order: Order): OrderDraft {
     note: order.note,
     status: order.status === "completed" ? "completed" : "pending",
     lines: order.lineItems.map((li) => ({ key: uid(), category: li.category, name: li.name, unit: li.unit, price: String(li.price), qty: String(li.qty) })),
+    discount: order.discount ? String(order.discount) : "",
+    discountType: order.discountType === "percent" ? "percent" : "amount",
     payMethod: null,
     payAmount: "",
   };
@@ -74,8 +80,20 @@ export function lineTotal(line: DraftLine): number {
   return round2(parseAmount(line.qty) * parseAmount(line.price));
 }
 
-export function draftTotal(draft: OrderDraft): number {
+export function draftSubtotal(draft: OrderDraft): number {
   return round2(draft.lines.reduce((sum, l) => sum + lineTotal(l), 0));
+}
+
+/** Same rules as a saved order: never negative, never more than the items come to. */
+export function draftDiscount(draft: OrderDraft): number {
+  const subtotal = draftSubtotal(draft);
+  const entered = parseAmount(draft.discount);
+  const amount = draft.discountType === "percent" ? (subtotal * entered) / 100 : entered;
+  return round2(Math.min(Math.max(amount, 0), subtotal));
+}
+
+export function draftTotal(draft: OrderDraft): number {
+  return round2(draftSubtotal(draft) - draftDiscount(draft));
 }
 
 export function validateDraft(draft: OrderDraft): DraftErrors {
@@ -104,6 +122,8 @@ export function draftToInput(draft: OrderDraft): OrderInput {
     note: draft.note.trim(),
     status: draft.status,
     lineItems: draft.lines.map((l) => ({ category: l.category, name: l.name, unit: l.unit, qty: parseAmount(l.qty), price: parseAmount(l.price) })),
+    discount: parseAmount(draft.discount),
+    discountType: draft.discountType,
     payment: draft.payMethod && amount > 0 ? { method: draft.payMethod, amount } : null,
   };
 }

@@ -15,6 +15,8 @@ export interface ReportOption {
 export interface ReportDefinition {
   type: ReportType;
   label: string;
+  /** One line about what the PDF contains, shown while picking. */
+  detail: string;
   needs: "customer" | "order" | "contractor" | null;
   usesPeriod: boolean;
   defaultPeriod: Exclude<PeriodPreset, "custom">;
@@ -32,7 +34,7 @@ export interface ExportRequest {
 
 export const REPORTS: ReportDefinition[] = [
   {
-    type: "statement", label: "Customer statement", needs: "customer", usesPeriod: true, defaultPeriod: "all",
+    type: "statement", label: "Customer statement", detail: "Every order and payment for one customer, with the running balance.", needs: "customer", usesPeriod: true, defaultPeriod: "all",
     options: [
       { key: "items", label: "Item details", defaultOn: true },
       { key: "siteContractor", label: "Contractor & site", defaultOn: false },
@@ -40,7 +42,7 @@ export const REPORTS: ReportDefinition[] = [
     ],
   },
   {
-    type: "bill", label: "Order bill", needs: "order", usesPeriod: false, defaultPeriod: "all",
+    type: "bill", label: "Order bill", detail: "One order as a printable bill for the customer.", needs: "order", usesPeriod: false, defaultPeriod: "all",
     options: [
       { key: "payments", label: "Payments & balance", defaultOn: true },
       { key: "siteContractor", label: "Contractor & site", defaultOn: true },
@@ -48,7 +50,7 @@ export const REPORTS: ReportDefinition[] = [
     ],
   },
   {
-    type: "daily", label: "Sales report", needs: null, usesPeriod: true, defaultPeriod: "today",
+    type: "daily", label: "Sales report", detail: "Sales, collections and dues over a period.", needs: null, usesPeriod: true, defaultPeriod: "today",
     options: [
       { key: "items", label: "Item details", defaultOn: true },
       { key: "payments", label: "Payments received", defaultOn: true },
@@ -57,7 +59,7 @@ export const REPORTS: ReportDefinition[] = [
     ],
   },
   {
-    type: "contractor", label: "Contractor", needs: "contractor", usesPeriod: true, defaultPeriod: "month",
+    type: "contractor", label: "Contractor", detail: "What one contractor brought in — items, sites and customers.", needs: "contractor", usesPeriod: true, defaultPeriod: "month",
     options: [
       { key: "items", label: "Item-wise summary", defaultOn: true },
       { key: "sites", label: "Site-wise summary", defaultOn: true },
@@ -65,7 +67,7 @@ export const REPORTS: ReportDefinition[] = [
     ],
   },
   {
-    type: "items", label: "Item sales", needs: null, usesPeriod: true, defaultPeriod: "month",
+    type: "items", label: "Item sales", detail: "Item-wise quantity and value over a period.", needs: null, usesPeriod: true, defaultPeriod: "month",
     options: [{ key: "categories", label: "Category summary", defaultOn: true }],
   },
 ];

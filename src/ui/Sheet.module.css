@@ -7,7 +7,7 @@
 .backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(17, 24, 39, 0.42);
+  background: var(--overlay);
   animation: fade 0.18s ease-out;
 }
 

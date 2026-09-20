@@ -1,0 +1,41 @@
+.block {
+  margin-bottom: 16px;
+}
+
+.badgeIn,
+.badgeOut {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 17px;
+}
+
+.badgeIn {
+  background: var(--paid-bg);
+  color: var(--paid);
+}
+
+.badgeOut {
+  background: var(--due-bg);
+  color: var(--due);
+}
+
+.in {
+  color: var(--paid);
+  font-variant-numeric: tabular-nums;
+}
+
+.out {
+  color: var(--due);
+  font-variant-numeric: tabular-nums;
+}
+
+.inHand {
+  font-weight: 650;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}

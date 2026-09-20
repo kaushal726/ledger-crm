@@ -25,7 +25,7 @@
   gap: 6px;
   padding: 36px 20px;
   background: var(--surface);
-  border: 1px dashed #d8dce2;
+  border: 1px dashed var(--line-dashed);
   border-radius: var(--radius);
 }
 
@@ -62,7 +62,7 @@
 /* Skeleton */
 .skeleton {
   border-radius: var(--radius);
-  background: #eaecf0;
+  background: var(--skeleton);
   animation: pulse 1.3s ease-in-out infinite;
 }
 

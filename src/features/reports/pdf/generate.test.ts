@@ -17,9 +17,9 @@ function sampleDB(): DB {
   db.contractors = [{ id: "k1", name: "Vikram Builders", phone: "9812345678", createdAt: 1, updatedAt: 1 }];
   db.customers = [{ id: "c1", name: "Ramesh Sharma", phone: "09876543210", address: "Sector 12", contractorId: "k1", openingBalance: 1200, createdAt: 1, updatedAt: 1 }];
   db.orders = [
-    { id: "o1", date: "2026-09-02", customerId: "c1", contractorId: "k1", site: "Sharma residence", note: "Deliver before 10am", status: "completed", createdAt: 2, updatedAt: 2,
+    { id: "o1", date: "2026-09-02", customerId: "c1", contractorId: "k1", site: "Sharma residence", note: "Deliver before 10am", status: "completed", createdAt: 2, updatedAt: 2, discount: 5, discountType: "percent",
       lineItems: [{ category: "ACC", name: "Cement Bag", qty: 10, unit: "bag", price: 400 }, { category: "Sand", name: "River Sand", qty: 2.5, unit: "ton", price: 1800 }] },
-    { id: "o2", date: "2026-09-15", customerId: "c1", contractorId: "k1", site: "Sharma residence", note: "", status: "completed", createdAt: 3, updatedAt: 3,
+    { id: "o2", date: "2026-09-15", customerId: "c1", contractorId: "k1", site: "Sharma residence", note: "", status: "completed", createdAt: 3, updatedAt: 3, discount: 0, discountType: "amount",
       lineItems: [{ category: "Steel", name: "Jindal Panther 8mm", qty: 12, unit: "pc", price: 520 }] },
   ];
   db.payments = [

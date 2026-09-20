@@ -50,8 +50,8 @@
 }
 
 .danger {
-  border-color: #f5c6c1;
-  background: #fffbfa;
+  border-color: var(--due-border);
+  background: var(--due-bg);
 }
 
 .lock {
@@ -76,4 +76,18 @@
   font-size: 14.5px;
   line-height: 1.5;
   color: var(--ink-2);
+}
+
+.theme {
+  margin-bottom: 10px;
+}
+
+.warning {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--warn-bg);
+  color: var(--warn);
+  font-size: 13px;
+  line-height: 1.45;
 }

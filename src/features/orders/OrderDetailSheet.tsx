@@ -1,11 +1,11 @@
 import { FiAlertCircle, FiBriefcase, FiFileText, FiMapPin, FiMessageSquare, FiUser } from "react-icons/fi";
 import { deleteOrder, setOrderStatus } from "../../data/actions";
-import { EMPTY_ORDER_MONEY, getLedgerIndex, lineAmount } from "../../data/ledger";
+import { EMPTY_ORDER_MONEY, getLedgerIndex, lineAmount, orderDiscount, orderSubtotal } from "../../data/ledger";
 import { paymentMethodLabel } from "../../data/paymentMethods";
 import { useDB } from "../../data/store";
 import type { Order } from "../../data/types";
 import { formatDate } from "../../lib/dates";
-import { formatMoney, formatQty } from "../../lib/format";
+import { formatMoney, formatQty, round2 } from "../../lib/format";
 import { href, navigate } from "../../app/router";
 import { Button } from "../../ui/Button";
 import { useConfirm } from "../../ui/Confirm";
@@ -17,6 +17,8 @@ import { StatusTag, orderMoneyNote } from "./orderStatus";
 import { useOrderSheets } from "./OrderSheets";
 import { useCompleteOrder } from "./useCompleteOrder";
 import styles from "./orders.module.css";
+
+const discountLabel = (order: Order) => (order.discountType === "percent" ? `Discount (${order.discount}%)` : "Discount");
 
 export function OrderDetailSheet({ orderId, onClose }: { orderId: string | null; onClose: () => void }) {
   const db = useDB();
@@ -37,6 +39,7 @@ function OrderDetail({ order, onClose }: { order: Order; onClose: () => void }) 
   const toast = useToast();
   const index = getLedgerIndex(db);
   const money = index.orderMoney.get(order.id) ?? EMPTY_ORDER_MONEY;
+  const discount = orderDiscount(order);
   const payments = index.paymentsByOrder.get(order.id) ?? [];
   const contractor = order.contractorId ? index.contractorsById.get(order.contractorId) : undefined;
 
@@ -48,7 +51,8 @@ function OrderDetail({ order, onClose }: { order: Order; onClose: () => void }) 
     }
   };
   const remove = async () => {
-    const message = payments.length ? "Payments taken for it stay in the customer's ledger." : "This can't be undone.";
+    const paid = round2(payments.reduce((sum, p) => sum + p.amount, 0));
+    const message = paid > 0 ? `The ${formatMoney(paid)} received for it will be deleted too.` : "This can't be undone.";
     if (!(await confirm({ title: "Delete this order?", message, confirmLabel: "Delete", danger: true }))) return;
     deleteOrder(order.id);
     onClose();
@@ -76,6 +80,12 @@ function OrderDetail({ order, onClose }: { order: Order; onClose: () => void }) 
             <span>{formatMoney(lineAmount(li))}</span>
           </div>
         ))}
+        {discount > 0 && (
+          <>
+            <div className={styles.itemLine}><span>Subtotal</span><span className="num">{formatMoney(orderSubtotal(order))}</span></div>
+            <div className={styles.itemLine}><span>{discountLabel(order)}</span><span className="num">− {formatMoney(discount)}</span></div>
+          </>
+        )}
         <div className={styles.totalLine}><span>Total</span><span className="num">{formatMoney(money.total)}</span></div>
       </ListGroup>
 

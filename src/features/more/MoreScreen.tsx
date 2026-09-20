@@ -8,10 +8,18 @@ import { href } from "../../app/router";
 import { isStandalone, useInstallPrompt } from "../../app/installPrompt";
 import { describeSyncStatus, useSyncStatus } from "../../sync/useSyncStatus";
 import { ListGroup, ListRow, PageHeader, SectionTitle } from "../../ui/layout";
+import { Segmented } from "../../ui/Segmented";
+import { setThemeChoice, useThemeChoice, type ThemeChoice } from "../../app/theme";
 import { plural } from "../../lib/format";
 import { Sheet } from "../../ui/Sheet";
 import { formatBytes, useStorageUsage } from "./useStorageUsage";
 import styles from "./more.module.css";
+
+const THEMES: { value: ThemeChoice; label: string }[] = [
+  { value: "system", label: "System" },
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+];
 
 export function MoreScreen() {
   const db = useDB();
@@ -20,6 +28,7 @@ export function MoreScreen() {
   const lockIcon = useUnlocked() ? undefined : <FiLock aria-label="Locked" className={styles.lock} />;
   const [showInstallHelp, setShowInstallHelp] = useState(false);
   const bytes = useStorageUsage(db);
+  const theme = useThemeChoice();
   const counts = [plural(db.orders.length, "order"), plural(db.payments.length, "payment"), plural(db.customers.length, "customer")].join(" · ");
 
   return (
@@ -33,6 +42,7 @@ export function MoreScreen() {
       </ListGroup>
 
       <SectionTitle>This phone</SectionTitle>
+      <Segmented label="Appearance" className={styles.theme} value={theme} onChange={setThemeChoice} options={THEMES} />
       <ListGroup>
         <ListRow leading={<FiHardDrive />} title={bytes === null ? "Stored on this phone" : `${formatBytes(bytes)} stored on this phone`} subtitle={counts} />
         {!isStandalone() && (

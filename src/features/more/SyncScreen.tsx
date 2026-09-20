@@ -59,6 +59,12 @@ export function SyncScreen() {
             <span className={styles.statusDot} data-state={status.state} />
             <b>{describeSyncStatus(status)}</b>
           </div>
+          {status.outdatedScript && (
+            <p className={styles.warning}>
+              The script in your Google Sheet is older than this app, so some records are still waiting.
+              Open the Sheet → Extensions → Apps Script, paste the latest <b>Code.gs</b>, then Deploy → Manage deployments → Edit → New version.
+            </p>
+          )}
           <p className={styles.help}>
             {connectedUrl
               ? "Changes are saved on this phone first and sent to the Sheet in the background. The app checks for changes from others every minute while open."

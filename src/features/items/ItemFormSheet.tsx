@@ -7,6 +7,7 @@ import { parseAmount } from "../../lib/format";
 import { Button } from "../../ui/Button";
 import { useConfirm } from "../../ui/Confirm";
 import { TextField } from "../../ui/Field";
+import { QuickAmounts } from "../../ui/QuickAmounts";
 import { Sheet } from "../../ui/Sheet";
 import { useToast } from "../../ui/Toast";
 
@@ -64,6 +65,7 @@ function ItemForm({ open, onClose, item, initialName = "", onSaved }: ItemFormSh
       <datalist id={categoriesId}>{categories.map((c) => <option key={c} value={c} />)}</datalist>
       <TextField label="Unit" optional value={unit} onChange={setUnit} autoComplete="off" placeholder="pc, kg, box…" />
       <TextField label="Default price" prefix="₹" value={price} onChange={(v) => setPrice(v.replace(/[^\d.]/g, ""))} inputMode="decimal" autoFocus={!item && Boolean(initialName)} />
+      <QuickAmounts value={price} onChange={setPrice} />
       {item && <Button variant="danger" block onClick={remove}>Remove item</Button>}
     </Sheet>
   );

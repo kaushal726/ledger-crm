@@ -6,6 +6,8 @@ export const APP_NAME = "Ledgerly";
 export const APP_TAGLINE = "Sales, dues & customer ledger";
 
 export const THEME_COLOR = "#F4F5F7";
+/** Matches --bg under `prefers-color-scheme: dark` in src/styles/global.css. */
+export const THEME_COLOR_DARK = "#0F1116";
 
 export const WEB_MANIFEST = {
   name: `${APP_NAME} — ${APP_TAGLINE}`,

@@ -8,14 +8,16 @@ import { formatMoney, formatPhone } from "../../lib/format";
 import { Button } from "../../ui/Button";
 import { TextAreaField, TextField } from "../../ui/Field";
 import { FormError, FormGroup, FormLabel, InputRow, PickRow } from "../../ui/FormRows";
+import { QuickAmounts } from "../../ui/QuickAmounts";
 import { Segmented } from "../../ui/Segmented";
 import { Sheet } from "../../ui/Sheet";
 import { useToast } from "../../ui/Toast";
 import { ContractorPickerSheet } from "../contractors/ContractorPickerSheet";
 import { CustomerPickerSheet } from "../customers/CustomerPickerSheet";
 import { ItemPickerSheet } from "../items/ItemPickerSheet";
+import { DiscountRow } from "./DiscountRow";
 import { LineItemsEditor } from "./LineItemsEditor";
-import { draftFromOrder, draftToInput, draftTotal, hasErrors, lineFromItem, newDraft, validateDraft, type DraftErrors, type DraftLine, type OrderDraft, type OrderPrefill } from "./orderDraft";
+import { draftDiscount, draftFromOrder, draftSubtotal, draftToInput, draftTotal, hasErrors, lineFromItem, newDraft, validateDraft, type DraftErrors, type DraftLine, type OrderDraft, type OrderPrefill } from "./orderDraft";
 import { PaymentHint } from "./PaymentHint";
 import styles from "./orders.module.css";
 
@@ -49,6 +51,8 @@ function OrderForm({ open, onClose, order, prefill }: OrderFormSheetProps) {
   const customer = draft.customerId ? index.customersById.get(draft.customerId) : undefined;
   const contractor = draft.contractorId ? index.contractorsById.get(draft.contractorId) : undefined;
   const balance = customer ? (index.accounts.get(customer.id) ?? EMPTY_ACCOUNT).balance : 0;
+  const subtotal = draftSubtotal(draft);
+  const discount = draftDiscount(draft);
   const total = draftTotal(draft);
   const pastSites = useMemo(
     () => [...new Set((index.ordersByCustomer.get(draft.customerId ?? "") ?? []).map((o) => o.site).filter(Boolean))],
@@ -119,12 +123,24 @@ function OrderForm({ open, onClose, order, prefill }: OrderFormSheetProps) {
       />
       <FormError>{errors.lines}</FormError>
 
+      <DiscountRow
+        value={draft.discount}
+        type={draft.discountType}
+        amount={discount}
+        subtotal={subtotal}
+        onValue={(discount) => update({ discount })}
+        onType={(discountType) => update({ discountType })}
+      />
+
       {!order && (
         <>
           <FormLabel>Payment received now</FormLabel>
           <Segmented label="Payment method" options={PAY_OPTIONS} value={draft.payMethod ?? "none"} onChange={choosePay} className={styles.formBlock} />
           {draft.payMethod && (
-            <TextField label="Amount received" prefix="₹" value={draft.payAmount} onChange={(v) => update({ payAmount: v.replace(/[^\d.]/g, "") })} inputMode="decimal" />
+            <>
+              <TextField label="Amount received" prefix="₹" value={draft.payAmount} onChange={(v) => update({ payAmount: v.replace(/[^\d.]/g, "") })} inputMode="decimal" />
+              <QuickAmounts value={draft.payAmount} onChange={(payAmount) => update({ payAmount })} />
+            </>
           )}
         </>
       )}

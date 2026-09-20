@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { customerLedger, getLedgerIndex } from "./ledger";
+import { customerLedger, getLedgerIndex, orderDiscount, orderTotal } from "./ledger";
 import { emptyDB } from "./seed";
 import type { DB, Order, Payment } from "./types";
 
 const order = (id: string, date: string, amount: number, status: Order["status"], createdAt: number): Order => ({
   id, date, customerId: "c1", contractorId: null, site: "", note: "", status, createdAt, updatedAt: createdAt,
   lineItems: [{ category: "ACC", name: "Cement Bag", qty: amount / 100, unit: "bag", price: 100 }],
+  discount: 0, discountType: "amount",
 });
 
 const payment = (id: string, date: string, amount: number, orderId: string | null, createdAt: number): Payment => ({
@@ -75,5 +76,27 @@ describe("ledger entries", () => {
       ["payment", -500, 1800],
       ["payment", -300, 1500],
     ]);
+  });
+});
+
+describe("order discount", () => {
+  const withDiscount = (discount: number, discountType: Order["discountType"]): Order =>
+    ({ ...order("o1", "2026-09-01", 1000, "completed", 1), discount, discountType });
+
+  it("takes a rupee amount or a percent off the items", () => {
+    expect(orderTotal(withDiscount(150, "amount"))).toBe(850);
+    expect(orderTotal(withDiscount(10, "percent"))).toBe(900);
+    expect(orderDiscount(withDiscount(2.5, "percent"))).toBe(25);
+  });
+
+  it("never goes below zero or past the bill", () => {
+    expect(orderTotal(withDiscount(5000, "amount"))).toBe(0);
+    expect(orderTotal(withDiscount(-200, "amount"))).toBe(1000);
+    expect(orderTotal(withDiscount(150, "percent"))).toBe(0);
+  });
+
+  it("counts the discounted total in the customer's balance", () => {
+    const db: DB = { ...emptyDB(), orders: [withDiscount(200, "amount")] };
+    expect(getLedgerIndex(db).accounts.get("c1")?.balance).toBe(800);
   });
 });

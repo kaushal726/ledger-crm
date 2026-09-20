@@ -1,5 +1,5 @@
 import { businessOf } from "../../../data/business";
-import { EMPTY_ACCOUNT, getLedgerIndex, itemsSummary, lineAmount, type LedgerEntry } from "../../../data/ledger";
+import { EMPTY_ACCOUNT, getLedgerIndex, itemsSummary, lineAmount, orderDiscount, orderSubtotal, type LedgerEntry } from "../../../data/ledger";
 import { paymentMethodLabel } from "../../../data/paymentMethods";
 import type { DB } from "../../../data/types";
 import { formatDate, formatRange, rangeSlug, todayISO } from "../../../lib/dates";
@@ -77,6 +77,7 @@ export function buildBill(pdf: ReportDoc, db: DB, req: ExportRequest): BuiltRepo
   const contractor = order.contractorId ? index.contractorsById.get(order.contractorId) : undefined;
   const money = index.orderMoney.get(order.id);
   const billNo = order.id.slice(-6).toUpperCase();
+  const discount = orderDiscount(order);
 
   pdf
     .header(businessOf(db), "Bill", [`Bill no. ${billNo}`, `Date ${formatDate(order.date)}`])
@@ -88,7 +89,15 @@ export function buildBill(pdf: ReportDoc, db: DB, req: ExportRequest): BuiltRepo
     ])
     .table(
       ["#", "Item", "Qty", "Rate", "Amount"],
-      order.lineItems.map((li, i) => [String(i + 1), li.name, `${formatQty(li.qty)} ${li.unit}`.trim(), formatMoney(li.price), formatMoney(lineAmount(li))]),
+      [
+        ...order.lineItems.map((li, i) => [String(i + 1), li.name, `${formatQty(li.qty)} ${li.unit}`.trim(), formatMoney(li.price), formatMoney(lineAmount(li))]),
+        ...(discount > 0
+          ? [
+            ["", "Subtotal", "", "", formatMoney(orderSubtotal(order))],
+            ["", order.discountType === "percent" ? `Discount (${order.discount}%)` : "Discount", "", "", `− ${formatMoney(discount)}`],
+          ]
+          : []),
+      ],
       { foot: ["", "Total", "", "", formatMoney(money?.total ?? 0)], columnStyles: { 0: { cellWidth: 24 }, 2: RIGHT, 3: RIGHT, 4: RIGHT } },
     );
 

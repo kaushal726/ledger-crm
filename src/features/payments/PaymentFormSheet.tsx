@@ -10,6 +10,7 @@ import { Button } from "../../ui/Button";
 import { useConfirm } from "../../ui/Confirm";
 import { TextAreaField, TextField } from "../../ui/Field";
 import { FormLabel } from "../../ui/FormRows";
+import { QuickAmounts } from "../../ui/QuickAmounts";
 import { Segmented } from "../../ui/Segmented";
 import { Sheet } from "../../ui/Sheet";
 import { useToast } from "../../ui/Toast";
@@ -74,6 +75,7 @@ function PaymentForm({ open, onClose, payment, prefill }: PaymentFormSheetProps)
     >
       {order && <p className={styles.against}>Against order of {formatDate(order.date)} · {itemsSummary(order)}</p>}
       <TextField label="Amount" prefix="₹" value={amount} onChange={(v) => { setAmount(v.replace(/[^\d.]/g, "")); setError(""); }} error={error} inputMode="decimal" autoFocus={!payment} />
+      <QuickAmounts value={amount} onChange={(v) => { setAmount(v); setError(""); }} />
       <FormLabel>Method</FormLabel>
       <Segmented label="Payment method" options={PAYMENT_METHODS} value={method} onChange={setMethod} className={styles.methods} />
       <TextField label="Date" type="date" value={date} onChange={setDate} max={todayISO()} />

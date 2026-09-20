@@ -2,25 +2,19 @@
  * keeps a single filter row instead of a wall of chips.
  */
 import { useState } from "react";
-import { FiCheck, FiSliders } from "react-icons/fi";
+import { FiSliders } from "react-icons/fi";
 import { cx } from "../lib/cx";
 import { Button } from "./Button";
 import { SearchInput } from "./inputs";
+import { OptionList, type Option } from "./OptionSheet";
 import { Sheet } from "./Sheet";
 import styles from "./filterBar.module.css";
-
-export interface FilterOption {
-  value: string;
-  label: string;
-  /** How many rows this choice would leave, when the screen can say. */
-  count?: number;
-}
 
 export interface FilterGroup {
   key: string;
   label: string;
   value: string;
-  options: FilterOption[];
+  options: Option[];
   onChange: (value: string) => void;
   /** Value that means "no filter"; the first option unless given. */
   defaultValue?: string;
@@ -65,22 +59,7 @@ export function FilterBar({ search, groups, className }: FilterBarProps) {
         {groups.map((group) => (
           <div key={group.key} className={styles.group}>
             <div className={styles.groupLabel}>{group.label}</div>
-            <div className={styles.options} role="listbox" aria-label={group.label}>
-              {group.options.map((o) => (
-                <button
-                  key={o.value}
-                  type="button"
-                  role="option"
-                  aria-selected={o.value === group.value}
-                  className={styles.option}
-                  onClick={() => group.onChange(o.value)}
-                >
-                  <span className={styles.optionLabel}>{o.label}</span>
-                  {o.count !== undefined && <span className={styles.count}>{o.count}</span>}
-                  {o.value === group.value && <FiCheck aria-hidden />}
-                </button>
-              ))}
-            </div>
+            <OptionList label={group.label} options={group.options} value={group.value} onChange={group.onChange} />
           </div>
         ))}
       </Sheet>

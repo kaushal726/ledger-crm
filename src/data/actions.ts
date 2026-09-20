@@ -4,8 +4,8 @@ import { removeById, sameText, upsertById } from "./listOps";
 import { emptyDB } from "./seed";
 import { commit } from "./store";
 import {
-  BUSINESS_SETTINGS_ID, type BusinessSettings, type Contractor, type Customer, type DB, type Item,
-  type LineItem, type Order, type OrderStatus, type Payment, type PaymentMethod,
+  BUSINESS_SETTINGS_ID, type BusinessSettings, type CashEntry, type Contractor, type Customer, type DB,
+  type DiscountType, type Item, type LineItem, type Order, type OrderStatus, type Payment, type PaymentMethod,
 } from "./types";
 
 const UNCATEGORIZED = "Uncategorized";
@@ -18,6 +18,8 @@ export interface OrderInput {
   note: string;
   status: Exclude<OrderStatus, "cancelled">;
   lineItems: LineItem[];
+  discount: number;
+  discountType: DiscountType;
   /** Money received while creating the order. */
   payment: { amount: number; method: PaymentMethod } | null;
 }
@@ -37,6 +39,7 @@ export function saveOrder(input: OrderInput, editingId: string | null): string {
     const order: Order = {
       id, date: input.date, customerId: input.customerId, contractorId: input.contractorId,
       site: input.site, note: input.note, status: input.status, lineItems: input.lineItems,
+      discount: input.discount, discountType: input.discountType,
       createdAt: existing?.createdAt ?? now, updatedAt: now,
     };
     const payments = input.payment && input.payment.amount > 0
@@ -54,8 +57,10 @@ export function setOrderStatus(id: string, status: OrderStatus): void {
   });
 }
 
+// Payments taken against the order go with it; leaving them behind would keep the money
+// counted in the day's collections and sitting in the customer's ledger as an advance.
 export function deleteOrder(id: string): void {
-  commit((db) => ({ ...db, orders: removeById(db.orders, id) }));
+  commit((db) => ({ ...db, orders: removeById(db.orders, id), payments: db.payments.filter((p) => p.orderId !== id) }));
 }
 
 /* ---------- payments ---------- */
@@ -77,6 +82,25 @@ export function savePayment(input: PaymentInput, editingId: string | null): void
 
 export function deletePayment(id: string): void {
   commit((db) => ({ ...db, payments: removeById(db.payments, id) }));
+}
+
+/* ---------- cash in / out (not tied to a customer ledger) ---------- */
+
+export type CashInput = Pick<CashEntry, "date" | "direction" | "amount" | "method" | "party" | "note">;
+
+export function saveCash(input: CashInput, editingId: string | null): string {
+  const id = editingId ?? uid();
+  commit((db) => {
+    const existing = editingId ? db.cash.find((c) => c.id === editingId) : undefined;
+    const now = Date.now();
+    const entry: CashEntry = { id, ...input, createdAt: existing?.createdAt ?? now, updatedAt: now };
+    return { ...db, cash: upsertById(db.cash, entry) };
+  });
+  return id;
+}
+
+export function deleteCash(id: string): void {
+  commit((db) => ({ ...db, cash: removeById(db.cash, id) }));
 }
 
 /* ---------- customers & contractors ---------- */

@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./app/App";
 import { registerServiceWorker } from "./app/pwa";
+import { initTheme } from "./app/theme";
 import { initStore } from "./data/store";
 import { ConfirmProvider } from "./ui/Confirm";
 import { ToastProvider } from "./ui/Toast";
@@ -17,5 +18,6 @@ createRoot(document.getElementById("root")!).render(
   </StrictMode>,
 );
 
+initTheme();
 void initStore();
 registerServiceWorker();

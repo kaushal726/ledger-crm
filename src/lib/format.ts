@@ -5,7 +5,9 @@ export function round2(n: number): number {
 }
 
 export function formatMoney(n: number): string {
-  return "₹" + round2(n).toLocaleString(LOCALE, { maximumFractionDigits: 2 });
+  const value = round2(n);
+  const text = "₹" + Math.abs(value).toLocaleString(LOCALE, { maximumFractionDigits: 2 });
+  return value < 0 ? "−" + text : text;   // "−₹300", not "₹-300"
 }
 
 /** A running balance: "₹500", "₹100 adv" when the customer is ahead, "₹0" when settled. */

@@ -46,6 +46,12 @@ describe("Code.gs", () => {
     expect(spreadsheet.getSheetByName("Items")).toBeNull();
   });
 
+  it("keeps rows for a collection it doesn't know, and says which", () => {
+    const res = push([item("a", 1), { collection: "widgets", row: { id: "w1", updatedAt: 1 } }]);
+    expect(res).toMatchObject({ ok: true, applied: 1, skipped: ["widgets"] });
+    expect(spreadsheet.getSheetByName("widgets")).toBeNull();
+  });
+
   it("rejects unknown actions", () => {
     expect(JSON.parse(script.doGet({ parameter: { action: "nope" } }).text)).toEqual({ ok: false, error: "Unknown action" });
   });

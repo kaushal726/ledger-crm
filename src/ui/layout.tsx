@@ -1,5 +1,5 @@
-import type { CSSProperties, ReactNode } from "react";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { useState, type CSSProperties, type ReactNode } from "react";
+import { FiChevronLeft, FiChevronRight, FiX } from "react-icons/fi";
 import { cx } from "../lib/cx";
 import styles from "./layout.module.css";
 
@@ -122,14 +122,54 @@ export function ListRow({ title, subtitle, right, leading, avatar, href, onClick
   return <div className={styles.row}>{content}</div>;
 }
 
-export function Fab({ label, icon, onClick }: { label: string; icon: ReactNode; onClick: () => void }) {
+export interface FabAction {
+  label: string;
+  icon: ReactNode;
+  onClick: () => void;
+}
+
+interface FabProps {
+  label: string;
+  icon: ReactNode;
+  onClick: () => void;
+  /** A second button above the main one that opens these choices. */
+  more?: { label: string; icon: ReactNode; items: FabAction[] };
+}
+
+export function Fab({ label, icon, onClick, more }: FabProps) {
+  const [open, setOpen] = useState(false);
+  const choose = (action: FabAction) => {
+    setOpen(false);
+    action.onClick();
+  };
+
   return (
     <>
       <div className={cx(styles.fabSpacer, "mobile-only")} aria-hidden />
-      <button type="button" className={cx(styles.fab, "mobile-only")} onClick={onClick}>
-        {icon}
-        {label}
-      </button>
+      {open && <button type="button" className={styles.fabBackdrop} aria-label="Close" onClick={() => setOpen(false)} />}
+      <div className={cx(styles.fabStack, "mobile-only")}>
+        {open && more?.items.map((item) => (
+          <button key={item.label} type="button" className={styles.fabAction} onClick={() => choose(item)}>
+            {item.icon}
+            {item.label}
+          </button>
+        ))}
+        {more && (
+          <button
+            type="button"
+            className={styles.fabMore}
+            aria-expanded={open}
+            aria-label={more.label}
+            onClick={() => setOpen((wasOpen) => !wasOpen)}
+          >
+            {open ? <FiX aria-hidden /> : more.icon}
+          </button>
+        )}
+        <button type="button" className={styles.fab} onClick={onClick}>
+          {icon}
+          {label}
+        </button>
+      </div>
     </>
   );
 }

@@ -201,7 +201,7 @@
 
 button.row:hover,
 a.row:hover {
-  background: #fafbfc;
+  background: var(--surface-hover);
 }
 
 .rowLeading {
@@ -257,11 +257,60 @@ a.row:hover {
 }
 
 /* Floating action button (phones) */
-.fab {
+.fabStack {
   position: fixed;
   right: 16px;
   bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 16px);
   z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.fabBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+  border: none;
+  background: var(--overlay);
+}
+
+.fabMore {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--primary);
+  font-size: 21px;
+  box-shadow: var(--shadow-float);
+}
+
+.fabAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14.5px;
+  font-weight: 650;
+  box-shadow: var(--shadow-float);
+}
+
+.fabAction svg {
+  font-size: 18px;
+  color: var(--ink-2);
+}
+
+.fab {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -270,7 +319,7 @@ a.row:hover {
   border: none;
   border-radius: 16px;
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
   font-size: 15px;
   font-weight: 650;
   box-shadow: var(--shadow-float);

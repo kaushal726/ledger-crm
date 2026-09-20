@@ -16,8 +16,8 @@
 }
 
 .button:hover:not(:disabled) {
-  border-color: #d3d7de;
-  background: #fafbfc;
+  border-color: var(--line-strong);
+  background: var(--surface-hover);
 }
 
 .button:disabled {
@@ -28,7 +28,7 @@
 .primary {
   background: var(--primary);
   border-color: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
 }
 
 .primary:hover:not(:disabled) {
@@ -53,18 +53,18 @@
 
 .danger:hover:not(:disabled) {
   background: var(--due-bg);
-  border-color: #f5c6c1;
+  border-color: var(--due-border);
 }
 
 .dangerSolid {
   background: var(--due);
   border-color: var(--due);
-  color: #fff;
+  color: var(--on-primary);
 }
 
 .dangerSolid:hover:not(:disabled) {
-  background: #912018;
-  border-color: #912018;
+  background: var(--due-strong);
+  border-color: var(--due-strong);
 }
 
 .sm {

@@ -13,6 +13,18 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="%APP_NAME%" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      // Before first paint: no white flash on a dark phone. Mirrors src/app/theme.ts.
+      (function () {
+        try {
+          var saved = localStorage.getItem("ledger_crm_theme");
+          var dark = saved === "dark" || (saved !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.dataset.theme = dark ? "dark" : "light";
+          if (dark) document.querySelector('meta[name="theme-color"]').content = "%THEME_COLOR_DARK%";
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

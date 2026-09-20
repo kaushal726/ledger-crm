@@ -17,6 +17,8 @@ export interface SyncStatus {
   state: SyncState;
   pending: number;
   lastSyncedAt: number | null;
+  /** The Sheet's Apps Script is older than this app and rejected some records. */
+  outdatedScript: boolean;
 }
 
 export interface RemoteMerge {
@@ -45,7 +47,8 @@ const PUSH_BATCH_SIZE = 200;
 let hooks: EngineHooks | null = null;
 const outbox = new Map<string, OutboxEntry>();
 let cursor = 0;
-let status: SyncStatus = { state: "disconnected", pending: 0, lastSyncedAt: null };
+let status: SyncStatus = { state: "disconnected", pending: 0, lastSyncedAt: null, outdatedScript: false };
+let outdatedScript = false;
 const listeners = new Set<() => void>();
 let running = false;
 let rerunRequested = false;
@@ -56,7 +59,7 @@ export const keyOf = (collection: Collection, id: string) => `${collection}:${id
 /* ---------- status ---------- */
 
 function setStatus(state: SyncState, lastSyncedAt = status.lastSyncedAt): void {
-  status = { state, pending: outbox.size, lastSyncedAt };
+  status = { state, pending: outbox.size, lastSyncedAt, outdatedScript };
   listeners.forEach((l) => l());
 }
 
@@ -142,8 +145,14 @@ async function pushOutbox(): Promise<void> {
         ? { id: e.id, updatedAt: e.updatedAt, deleted: true }
         : { ...toRow(e.collection, e.record, ctx), updatedAt: e.updatedAt },
     }));
-    await request("POST", { action: "push", changes });
-    const done = batch.filter((e) => outbox.get(e.key) === e).map((e) => e.key); // keep entries edited meanwhile
+    const res = await request<{ skipped?: string[] }>("POST", { action: "push", changes });
+    const unknown = new Set(res.skipped ?? []);
+    if (unknown.size) {
+      outdatedScript = true;
+      console.warn("The Sheet's script doesn't know these yet:", [...unknown].join(", "));
+    }
+    // Entries edited meanwhile, and ones the script rejected, stay queued.
+    const done = batch.filter((e) => outbox.get(e.key) === e && !unknown.has(e.collection)).map((e) => e.key);
     done.forEach((key) => outbox.delete(key));
     persist({ outboxDeletes: done });
     entries = entries.slice(PUSH_BATCH_SIZE);
@@ -205,6 +214,7 @@ export async function syncNow(): Promise<void> {
     return;
   }
   running = true;
+  outdatedScript = false;
   setStatus("syncing");
   try {
     await pushOutbox();

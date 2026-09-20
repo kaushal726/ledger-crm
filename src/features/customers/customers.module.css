@@ -81,7 +81,7 @@
 }
 
 button.entry:hover {
-  background: #fafbfc;
+  background: var(--surface-hover);
 }
 
 .badge {

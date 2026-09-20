@@ -1,8 +1,8 @@
 /* Aggregations for screens and reports — pure functions over the DB. */
 import { isWithin, monthKey } from "../lib/dates";
 import { round2 } from "../lib/format";
-import { getLedgerIndex, lineAmount, orderTotal } from "./ledger";
-import type { DB, Order } from "./types";
+import { getLedgerIndex, lineAmount, orderSubtotal, orderTotal } from "./ledger";
+import type { CashDirection, CashEntry, DB, Order } from "./types";
 
 export interface DateRange {
   from: string;
@@ -23,9 +23,22 @@ export interface DaySummary {
   pendingCount: number;
   completedCount: number;
   sales: number;
+  /** Everything received that day: customer payments plus other money in. */
   collected: number;
+  /** Money handed out that day (staff, expenses…). */
+  paidOut: number;
+  /** collected − paidOut. */
+  inHand: number;
   due: number;
+  cash: CashEntry[];
 }
+
+export function cashOn(db: DB, date: string): CashEntry[] {
+  return db.cash.filter((c) => c.date === date).sort((a, b) => b.createdAt - a.createdAt);
+}
+
+const sumCash = (entries: CashEntry[], direction: CashDirection) =>
+  round2(entries.filter((c) => c.direction === direction).reduce((s, c) => s + (Number(c.amount) || 0), 0));
 
 export function completedOrders(db: DB, range: DateRange, filter: (o: Order) => boolean = () => true): Order[] {
   return db.orders.filter((o) => o.status === "completed" && isWithin(o.date, range.from, range.to) && filter(o));
@@ -35,25 +48,37 @@ export function daySummary(db: DB, date: string): DaySummary {
   const index = getLedgerIndex(db);
   const orders = db.orders.filter((o) => o.date === date).sort((a, b) => b.createdAt - a.createdAt);
   const completed = orders.filter((o) => o.status === "completed");
+  const cash = cashOn(db, date);
+  const fromCustomers = round2(db.payments.filter((p) => p.date === date).reduce((s, p) => s + (Number(p.amount) || 0), 0));
+  const collected = round2(fromCustomers + sumCash(cash, "in"));
+  const paidOut = sumCash(cash, "out");
   return {
     orders,
     pendingCount: orders.filter((o) => o.status === "pending").length,
     completedCount: completed.length,
     sales: round2(completed.reduce((s, o) => s + orderTotal(o), 0)),
-    collected: round2(db.payments.filter((p) => p.date === date).reduce((s, p) => s + p.amount, 0)),
+    collected,
+    paidOut,
+    inHand: round2(collected - paidOut),
     due: round2(completed.reduce((s, o) => s + (index.orderMoney.get(o.id)?.due ?? 0), 0)),
+    cash,
   };
 }
 
 export function itemBreakdown(orders: Order[]): ItemRow[] {
   const rows = new Map<string, ItemRow>();
-  orders.forEach((o) => o.lineItems.forEach((li) => {
-    const key = `${li.category}|${li.name}`.toLowerCase();
-    const row = rows.get(key) ?? { key, category: li.category || "Uncategorized", name: li.name, unit: li.unit, qty: 0, amount: 0 };
-    row.qty = round2(row.qty + (Number(li.qty) || 0));
-    row.amount = round2(row.amount + lineAmount(li));
-    rows.set(key, row);
-  }));
+  orders.forEach((o) => {
+    // An order discount belongs to no single item, so it is spread across them by share.
+    const subtotal = orderSubtotal(o);
+    const share = subtotal ? orderTotal(o) / subtotal : 1;
+    o.lineItems.forEach((li) => {
+      const key = `${li.category}|${li.name}`.toLowerCase();
+      const row = rows.get(key) ?? { key, category: li.category || "Uncategorized", name: li.name, unit: li.unit, qty: 0, amount: 0 };
+      row.qty = round2(row.qty + (Number(li.qty) || 0));
+      row.amount = round2(row.amount + lineAmount(li) * share);
+      rows.set(key, row);
+    });
+  });
   return [...rows.values()].sort((a, b) => b.amount - a.amount);
 }
 

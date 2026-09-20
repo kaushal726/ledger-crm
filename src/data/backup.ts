@@ -36,7 +36,7 @@ function fromV1(raw: Loose): DB {
   const orders: Order[] = list(raw.orders).map((o) => ({
     id: str(o.id), date: str(o.date), customerId: str(o.customerId), contractorId: o.contractorId ? str(o.contractorId) : null,
     site: str(o.site), note: str(o.note), status: ORDER_STATUSES.includes(o.status as OrderStatus) ? (o.status as OrderStatus) : "pending",
-    lineItems: toLineItems(o.lineItems), createdAt: num(o.createdAt), updatedAt: 0,
+    lineItems: toLineItems(o.lineItems), discount: 0, discountType: "amount", createdAt: num(o.createdAt), updatedAt: 0,
   }));
 
   const payments: Payment[] = list(raw.orders).flatMap((o) => {
@@ -61,7 +61,7 @@ function fromV1(raw: Loose): DB {
   const contractors: Contractor[] = list(raw.contractors).map((c) => ({ id: str(c.id), name: str(c.name), phone: str(c.phone), createdAt: num(c.createdAt), updatedAt: 0 }));
   const items: Item[] = list(raw.items).map((i) => ({ id: str(i.id), category: str(i.category), name: str(i.name), unit: str(i.unit), price: num(i.price), updatedAt: 0 }));
 
-  return { customers, contractors, items, orders, payments, settings: [] };
+  return { customers, contractors, items, orders, payments, cash: [], settings: [] };
 }
 
 function fromV2(raw: Loose): DB {

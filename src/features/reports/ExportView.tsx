@@ -1,27 +1,28 @@
 import { useState } from "react";
 import { FiDownload, FiShare2 } from "react-icons/fi";
 import { businessOf } from "../../data/business";
-import { presetRange, type PeriodPreset } from "../../data/periods";
+import { PERIOD_LABELS, presetRange, type PeriodPreset } from "../../data/periods";
 import type { DateRange } from "../../data/stats";
 import { getDB, useDB } from "../../data/store";
 import { href, useRoute } from "../../app/router";
-import { todayISO } from "../../lib/dates";
+import { formatRange, todayISO } from "../../lib/dates";
 import { canShareFiles, downloadBlob, shareFile } from "../../lib/files";
 import { Button, IconButton } from "../../ui/Button";
 import { FormGroup, FormLabel, PickRow } from "../../ui/FormRows";
 import { Toggle } from "../../ui/inputs";
-import { ChoiceChips } from "../../ui/Segmented";
+import { OptionSheet } from "../../ui/OptionSheet";
 import { useToast } from "../../ui/Toast";
 import { ContractorPickerSheet } from "../contractors/ContractorPickerSheet";
 import { CustomerPickerSheet } from "../customers/CustomerPickerSheet";
 import { OrderPickerSheet } from "../orders/OrderPickerSheet";
 import { exportPreview } from "./exportPreview";
-import { PeriodPicker } from "./PeriodPicker";
+import { CustomRange } from "./CustomRange";
 import { REPORTS, defaultOptions, isReportType, reportDefinition, type ExportRequest, type ReportType } from "./reportTypes";
 import styles from "./reports.module.css";
 
-type Picker = "customer" | "order" | "contractor" | null;
+type Picker = "customer" | "order" | "contractor" | "report" | "period" | null;
 const PERIOD_PARAMS: PeriodPreset[] = ["today", "week", "month", "lastMonth", "all"];
+const PERIOD_OPTIONS: PeriodPreset[] = [...PERIOD_PARAMS, "custom"];
 
 export function ExportView() {
   const db = useDB();
@@ -80,25 +81,23 @@ export function ExportView() {
           Add your business name in <a href={href("more/business")}>Business profile</a> so it appears at the top of your PDFs.
         </p>
       )}
-      <FormLabel>Report</FormLabel>
-      <div className={styles.block}>
-        <ChoiceChips label="Report type" value={type} onChange={changeType} options={REPORTS.map((r) => ({ value: r.type, label: r.label }))} />
-      </div>
-
-      {def.needs && (
-        <FormGroup>
-          {def.needs === "customer" && <PickRow label="Customer" value={index.customer?.name} placeholder="Not chosen" onClick={() => setPicker("customer")} />}
-          {def.needs === "order" && <PickRow label="Order" value={index.order ? db.customers.find((c) => c.id === index.order!.customerId)?.name : undefined} detail={index.order?.date} placeholder="Not chosen" onClick={() => setPicker("order")} />}
-          {def.needs === "contractor" && <PickRow label="Contractor" value={index.contractor?.name} placeholder="Not chosen" onClick={() => setPicker("contractor")} />}
-        </FormGroup>
-      )}
-
-      {def.usesPeriod && (
-        <>
-          <FormLabel>Period</FormLabel>
-          <PeriodPicker preset={period} custom={custom} onPreset={setPeriod} onCustom={setCustom} />
-        </>
-      )}
+      <FormGroup>
+        <PickRow label="Report" value={def.label} detail={def.detail} placeholder="Choose" actionLabel="Change" onClick={() => setPicker("report")} />
+        {def.needs === "customer" && <PickRow label="Customer" value={index.customer?.name} placeholder="Not chosen" onClick={() => setPicker("customer")} />}
+        {def.needs === "order" && <PickRow label="Order" value={index.order ? db.customers.find((c) => c.id === index.order!.customerId)?.name : undefined} detail={index.order?.date} placeholder="Not chosen" onClick={() => setPicker("order")} />}
+        {def.needs === "contractor" && <PickRow label="Contractor" value={index.contractor?.name} placeholder="Not chosen" onClick={() => setPicker("contractor")} />}
+        {def.usesPeriod && (
+          <PickRow
+            label="Period"
+            value={PERIOD_LABELS[period]}
+            detail={period === "custom" ? formatRange(custom) : undefined}
+            placeholder="Choose"
+            actionLabel="Change"
+            onClick={() => setPicker("period")}
+          />
+        )}
+      </FormGroup>
+      {def.usesPeriod && period === "custom" && <CustomRange range={custom} onChange={setCustom} />}
 
       <FormLabel>Include</FormLabel>
       <FormGroup>
@@ -125,6 +124,24 @@ export function ExportView() {
         )}
       </div>
 
+      <OptionSheet
+        open={picker === "report"}
+        onClose={() => setPicker(null)}
+        title="Report"
+        label="Report type"
+        value={type}
+        onChange={(next) => changeType(next as ReportType)}
+        options={REPORTS.map((r) => ({ value: r.type, label: r.label, detail: r.detail }))}
+      />
+      <OptionSheet
+        open={picker === "period"}
+        onClose={() => setPicker(null)}
+        title="Period"
+        label="Period"
+        value={period}
+        onChange={(next) => setPeriod(next as PeriodPreset)}
+        options={PERIOD_OPTIONS.map((p) => ({ value: p, label: PERIOD_LABELS[p] }))}
+      />
       <CustomerPickerSheet open={picker === "customer"} onClose={() => setPicker(null)} onPick={setCustomerId} />
       <OrderPickerSheet open={picker === "order"} onClose={() => setPicker(null)} onPick={setOrderId} />
       <ContractorPickerSheet open={picker === "contractor"} onClose={() => setPicker(null)} onPick={setContractorId} />

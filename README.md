@@ -46,8 +46,14 @@ npm run build       # production build in dist/
 
 - **Orders** are Pending, Completed or Cancelled. Only completed orders count as sales and go
   into the customer's ledger.
+- **Discount** sits on the order as a rupee amount or a percent; every total, ledger entry and
+  report uses the discounted amount.
 - **Payments** are separate entries (Cash / UPI / Bank, any amount, any date). A payment taken
   while creating an order is linked to it; payments from the customer page are general.
+  Deleting an order deletes the payments taken against it.
+- **Cash in / out** (Orders screen → the ⇄ button above "New order") records money that isn't a customer's
+  ledger entry: other income, and money paid out to staff or for expenses. It changes the
+  day's Collected / Paid out / In hand, never a customer's balance.
 - **Customer balance** = opening balance + completed orders − payments. Per-order "paid/due"
   applies a linked payment to its own order first; everything else clears the oldest dues first.
 - **Contractor**: each customer can have a default contractor, pre-filled on new orders and
@@ -61,7 +67,7 @@ npm run build       # production build in dist/
 4. **Deploy**, approve the permissions (Google warns the app is unverified: **Advanced → Go to … (unsafe)**; it is your own script).
 5. Copy the **Web app URL** (ends in `/exec`).
 
-Tabs (Customers, Contractors, Items, Orders, Payments, Settings) are created when data first arrives.
+Tabs (Customers, Contractors, Items, Orders, Payments, Cash, Settings) are created when data first arrives.
 
 **Updating `Code.gs` later:** **Deploy → Manage deployments → Edit (pencil) → Version: New version → Deploy**.
 This keeps the same URL. A *new deployment* would get a new URL, and every phone would need to reconnect.
